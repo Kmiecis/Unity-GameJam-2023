@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Random = System.Random;
 
 namespace Custom.CaveGeneration
 {
@@ -34,6 +33,7 @@ namespace Custom.CaveGeneration
             public int passageWidth;
             public int borderHeight;
             public int borderWidth;
+            public bool borderless;
 
             public static readonly Input Default = new Input
             {
@@ -46,15 +46,16 @@ namespace Custom.CaveGeneration
                 roomSizeThreshold = 5,
                 passageWidth = 2,
                 borderHeight = 2,
-                borderWidth = 2
+                borderWidth = 2,
+                borderless = false
             };
         }
 
         public static void Generate(bool[] map, in Input input)
         {
             Noisex.GetRandomMap(map, input.width, input.height, input.fill, input.seed.GetHashCode());
-            ApplyBorder(map, input.width, input.height, input.borderHeight, input.borderWidth);
             Noisex.SmoothRandomMap(map, input.width, input.height, input.smooths);
+            ApplyBorder(map, input.width, input.height, input.borderHeight, input.borderWidth, input.borderless);
 
             var roomRegions = GetRegionsByType(map, input.width, input.height, kRoom);
             var removedRoomRegions = RemoveRegionsUnderThreshold(roomRegions, input.roomSizeThreshold);
@@ -66,44 +67,69 @@ namespace Custom.CaveGeneration
 
             var rooms = CreateRooms(roomRegions, map, input.width, input.height);
             var passages = FindPassages(rooms);
-            ClearPassages(passages, map, input.width, input.height, input.passageWidth, input.borderWidth);
+            ClearPassages(passages, map, input.width, input.height, input.passageWidth, input.borderWidth, input.borderHeight);
         }
 
-        private static void ApplyBorder(bool[] map, int width, int height, int borderWidth, int borderHeight)
+        private static void ApplyBorder(bool[] map, int width, int height, int borderWidth, int borderHeight, bool borderless)
         {
-            if (borderHeight > 0)
+            var bheight = Math.Abs(borderHeight);
+            var bheightType = borderHeight > 0 ? kWall : kRoom;
+            if (bheight != 0)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    for (int x = 0; x < borderHeight; x++)
+                    for (int x = 0; x < bheight; x++)
                     {
                         int i = Mathx.ToIndex(x, y, width);
-                        map[i] = kWall;
+                        map[i] = bheightType;
                     }
 
-                    for (int x = width - borderHeight; x < width; x++)
+                    for (int x = width - bheight; x < width; x++)
                     {
                         int i = Mathx.ToIndex(x, y, width);
-                        map[i] = kWall;
+                        map[i] = bheightType;
                     }
                 }
             }
 
-            if (borderWidth > 0)
+            var bwidth = Math.Abs(borderWidth);
+            var bwidthType = borderWidth > 0 ? kWall : kRoom;
+            if (bwidth != 0)
             {
-                for (int x = borderWidth; x < width - borderWidth; x++)
+                for (int x = 0; x < width; x++)
                 {
-                    for (int y = 0; y < borderWidth; y++)
+                    for (int y = 0; y < bwidth; y++)
                     {
                         int i = Mathx.ToIndex(x, y, width);
-                        map[i] = kWall;
+                        map[i] = bwidthType;
                     }
 
-                    for (int y = height - borderWidth; y < height; y++)
+                    for (int y = height - bwidth; y < height; y++)
                     {
                         int i = Mathx.ToIndex(x, y, width);
-                        map[i] = kWall;
+                        map[i] = bwidthType;
                     }
+                }
+            }
+
+            if (borderless)
+            {
+                for (int y = 0; y < height; y++)
+                {
+                    int i = Mathx.ToIndex(0, y, width);
+                    map[i] = kRoom;
+
+                    int j = Mathx.ToIndex(width - 1, y, width);
+                    map[j] = kRoom;
+                }
+
+                for (int x = 0; x < width; x++)
+                {
+                    int i = Mathx.ToIndex(x, 0, width);
+                    map[i] = kRoom;
+
+                    int j = Mathx.ToIndex(x, height - 1, width);
+                    map[j] = kRoom;
                 }
             }
         }
@@ -330,7 +356,7 @@ namespace Custom.CaveGeneration
             return result;
         }
 
-        private static void ClearPassages(List<Line> passages, bool[] map, int width, int height, int passageWidth, int borderWidth)
+        private static void ClearPassages(List<Line> passages, bool[] map, int width, int height, int passageWidth, int borderWidth, int borderHeight)
         {
             foreach (var passage in passages)
             {
@@ -338,14 +364,19 @@ namespace Custom.CaveGeneration
 
                 foreach (var tile in tiles)
                 {
-                    ClearCircle(tile, passageWidth, map, width, height, borderWidth);
+                    ClearCircle(tile, passageWidth, map, width, height, borderWidth, borderHeight);
                 }
             }
         }
 
-        private static void ClearCircle(Vector2Int tile, int r, bool[] map, int width, int height, int borderWidth)
+        private static void ClearCircle(Vector2Int tile, int r, bool[] map, int width, int height, int borderWidth, int borderHeight)
         {
-            var mapRange = new Range2Int(borderWidth, borderWidth, width - borderWidth - 1, height - borderWidth - 1);
+            var mapRange = new Range2Int(
+                Math.Max(borderWidth, 0),
+                Math.Max(borderHeight, 0),
+                Math.Min(width - borderWidth - 1, width - 1),
+                Math.Min(height - borderHeight - 1, height - 1)
+            );
 
             for (int y = -r; y <= r; y++)
             {
