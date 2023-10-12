@@ -32,6 +32,7 @@ namespace Custom.CaveGeneration
             public int wallSizeThreshold;
             public int roomSizeThreshold;
             public int passageWidth;
+            public int borderHeight;
             public int borderWidth;
 
             public static readonly Input Default = new Input
@@ -44,6 +45,7 @@ namespace Custom.CaveGeneration
                 wallSizeThreshold = 5,
                 roomSizeThreshold = 5,
                 passageWidth = 2,
+                borderHeight = 2,
                 borderWidth = 2
             };
         }
@@ -51,7 +53,7 @@ namespace Custom.CaveGeneration
         public static void Generate(bool[] map, in Input input)
         {
             Noisex.GetRandomMap(map, input.width, input.height, input.fill, input.seed.GetHashCode());
-            ApplyBorder(map, input.width, input.height, input.borderWidth);
+            ApplyBorder(map, input.width, input.height, input.borderHeight, input.borderWidth);
             Noisex.SmoothRandomMap(map, input.width, input.height, input.smooths);
 
             var roomRegions = GetRegionsByType(map, input.width, input.height, kRoom);
@@ -67,34 +69,37 @@ namespace Custom.CaveGeneration
             ClearPassages(passages, map, input.width, input.height, input.passageWidth, input.borderWidth);
         }
 
-        private static void ApplyBorder(bool[] map, int width, int height, int border)
+        private static void ApplyBorder(bool[] map, int width, int height, int borderWidth, int borderHeight)
         {
-            if (border > 0)
+            if (borderHeight > 0)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    for (int x = 0; x < border; x++)
+                    for (int x = 0; x < borderHeight; x++)
                     {
                         int i = Mathx.ToIndex(x, y, width);
                         map[i] = kWall;
                     }
 
-                    for (int x = width - border; x < width; x++)
+                    for (int x = width - borderHeight; x < width; x++)
                     {
                         int i = Mathx.ToIndex(x, y, width);
                         map[i] = kWall;
                     }
                 }
+            }
 
-                for (int x = border; x < width - border; x++)
+            if (borderWidth > 0)
+            {
+                for (int x = borderWidth; x < width - borderWidth; x++)
                 {
-                    for (int y = 0; y < border; y++)
+                    for (int y = 0; y < borderWidth; y++)
                     {
                         int i = Mathx.ToIndex(x, y, width);
                         map[i] = kWall;
                     }
 
-                    for (int y = height - border; y < height; y++)
+                    for (int y = height - borderWidth; y < height; y++)
                     {
                         int i = Mathx.ToIndex(x, y, width);
                         map[i] = kWall;
