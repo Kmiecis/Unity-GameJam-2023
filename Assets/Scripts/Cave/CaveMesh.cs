@@ -3,7 +3,7 @@ using Common.Extensions;
 using Common.Mathematics;
 using UnityEngine;
 
-namespace Custom.CaveGeneration
+namespace Game
 {
     public class CaveMesh : MonoBehaviour
     {
@@ -48,7 +48,7 @@ namespace Custom.CaveGeneration
 
             var vs = MarchingSquares.Vertices;
 
-            var uvStep = new Vector2(width, height);
+            var uvStep = new Vector2(1.0f / width, 1.0f / height);
 
             for (int y = 0; y < height - 1; y++)
             {
@@ -75,11 +75,50 @@ namespace Custom.CaveGeneration
                         var v1 = (Vector3)vs[t1] + v - wallOffset;
                         var v2 = (Vector3)vs[t2] + v - wallOffset;
 
-                        var uv0 = (vs[t0] + v.XY()) / uvStep;
-                        var uv1 = (vs[t1] + v.XY()) / uvStep;
-                        var uv2 = (vs[t2] + v.XY()) / uvStep;
+                        var uv0 = (vs[t0] + v.XY()) * uvStep;
+                        var uv1 = (vs[t1] + v.XY()) * uvStep;
+                        var uv2 = (vs[t2] + v.XY()) * uvStep;
                         
                         builder.AddTriangle(v0, v1, v2, uv0, uv1, uv2);
+                    }
+                    
+                    if (c > 0)
+                    {
+                        var wt0 = ts[i - 1];
+                        var wt1 = ts[i - 2];
+
+                        var wv0 = (Vector3)vs[wt0] + v - wallOffset;
+                        var wv1 = (Vector3)vs[wt1] + v - wallOffset;
+                        var wv2 = wv1 + wallOffset;
+                        var wv3 = wv0 + wallOffset;
+
+                        var uv0 = (vs[wt0] + v.XY()) * uvStep;
+                        var uv1 = (vs[wt1] + v.XY()) * uvStep;
+                        var uv2 = uv0;
+                        var uv3 = uv1;
+
+                        builder.AddTriangle(wv0, wv1, wv2, uv0, uv1, uv2);
+                        builder.AddTriangle(wv0, wv2, wv3, uv0, uv2, uv3);
+
+                        // Special cases of two walls
+                        if (c == 5 || c == 10)
+                        {
+                            wt0 = ts[1];
+                            wt1 = ts[2];
+
+                            wv0 = (Vector3)vs[wt0] + v - wallOffset;
+                            wv1 = (Vector3)vs[wt1] + v - wallOffset;
+                            wv2 = wv1 + wallOffset;
+                            wv3 = wv0 + wallOffset;
+                            
+                            uv0 = (vs[wt0] + v.XY()) * uvStep;
+                            uv1 = (vs[wt1] + v.XY()) * uvStep;
+                            uv2 = uv0;
+                            uv3 = uv1;
+
+                            builder.AddTriangle(wv2, wv1, wv0, uv2, uv1, uv0);
+                            builder.AddTriangle(wv2, wv0, wv3, uv2, uv0, uv3);
+                        }
                     }
                 }
             }

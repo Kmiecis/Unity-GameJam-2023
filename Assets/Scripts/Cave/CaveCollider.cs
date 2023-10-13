@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Custom.CaveGeneration
+namespace Game
 {
     public class CaveCollider : MonoBehaviour
     {

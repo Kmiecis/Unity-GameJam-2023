@@ -1,9 +1,9 @@
 ﻿using Common.Mathematics;
-using Custom.CaveGeneration;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace Common
+namespace Game
 {
     public class CaveManager : MonoBehaviour
     {
@@ -16,13 +16,68 @@ namespace Common
 
         public CaveGenerator.Input caveInput = CaveGenerator.Input.Default;
 
+        private float[] _noiseMap;
         private bool[] _caveMap;
+        private readonly Dictionary<Vector2Int, float> _waits = new ();
+        private readonly Dictionary<Vector2Int, float> _offsets = new ();
 
-        private bool[] BuildCaveMap()
+        public void Damage(int x, int y, int radius, int width, float delay)
         {
-            var result = new bool[caveInput.width * caveInput.height];
-            CaveGenerator.Generate(result, in caveInput);
-            return result;
+            for (int b = -radius; b < +radius; b++)
+            {
+                for (int a = -radius; a < +radius; a++)
+                {
+                    if (a * a + b * b < radius * radius)
+                    {
+                        var key = new Vector2Int { x = a + x, y = b + y };
+                        if (key.x > -1 && key.y > -1)
+                        {
+                            _waits[key] = delay;
+                            _offsets[key] = 1.0f;
+                        }
+                    }
+                }
+            }
+        }
+        
+        private void ApplyOffsets(float[] noise, int width, float repair)
+        {
+            var dt = Time.deltaTime;
+            var rt = 1.0f / repair;
+            
+            foreach (var kv in _waits)
+            {
+                var key = kv.Key;
+                var waitValue = kv.Value - dt;
+                if (waitValue > 0.0f)
+                {
+                    _waits[key] = waitValue;
+                    var i = Mathx.ToIndex(key.x, key.y, width);
+                    noise[i] = 0.0f;
+                }
+                else
+                {
+                    var offsetValue = _offsets[key] - rt * dt;
+                    if (offsetValue > 0.0f)
+                    {
+                        _offsets[key] = offsetValue;
+                        var i = Mathx.ToIndex(key.x, key.y, width);
+                        noise[i] -= offsetValue;
+                    }
+                    else
+                    {
+                        _waits.Remove(key);
+                        _offsets.Remove(key);
+                    }
+                }
+            }
+        }
+        
+        private void BuildCaveMap()
+        {
+            CaveGenerator.GenerateNoise(_noiseMap, in caveInput);
+            ApplyOffsets(_noiseMap, caveInput.width, caveInput.repair);
+            CaveGenerator.GenerateMap(_noiseMap, _caveMap, in caveInput);
         }
         
         private void PositionGround()
@@ -45,21 +100,25 @@ namespace Common
             }
         }
 
-        public void Build()
+        private void Build()
         {
-            _caveMap = BuildCaveMap();
+            _noiseMap = new float[caveInput.width * caveInput.height];
+            _caveMap = new bool[caveInput.width * caveInput.height];
+            
+            Rebuild();
+            PositionGround();
+        }
+
+        private void Rebuild()
+        {
+            BuildCaveMap();
+            
             if (_caveMesh != null)
                 _caveMesh.SetMap(_caveMap, caveInput.width, caveInput.height);
             if (_caveCollider != null)
                 _caveCollider.SetMap(_caveMap, caveInput.width, caveInput.height);
-            PositionGround();
         }
-
-        private void Start()
-        {
-            Build();
-        }
-
+        
 #if UNITY_EDITOR
         [Header("Gizmos")]
         [SerializeField]
