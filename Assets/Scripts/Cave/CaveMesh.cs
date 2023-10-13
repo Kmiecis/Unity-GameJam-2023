@@ -7,16 +7,22 @@ namespace Game
 {
     public class CaveMesh : MonoBehaviour
     {
+        private const string SHADER = "Shader Graphs/Standard";
+        private readonly int OFFSET_ID = Shader.PropertyToID("_BaseMap");
+        
         [Header("Components")]
         [SerializeField]
         protected MeshFilter _filter;
+        [SerializeField]
+        protected MeshRenderer _renderer;
         [Header("Input")]
         [SerializeField]
         protected float _wallHeight = 1.0f;
 
         private Mesh _mesh;
+        private Material _material;
 
-        public void SetMap(bool[] map, int width, int height)
+        public void SetMap(bool[] map, int width, int height, float dy)
         {
             _mesh = GetSharedMesh();
             if (_mesh != null && map != null)
@@ -24,6 +30,9 @@ namespace Game
                 var builder = GenerateMeshBuilder(map, width, height, _wallHeight);
                 builder.Overwrite(_mesh);
             }
+            
+            var material = GetSharedMaterial();
+            material.SetTextureOffset(OFFSET_ID, new Vector2 { y = dy / height });
         }
 
         private Mesh GetSharedMesh()
@@ -38,6 +47,33 @@ namespace Game
                 return mesh;
             }
             return null;
+        }
+        
+        private Material GetSharedMaterial()
+        {
+            if (_material == null)
+            {
+                if (_renderer != null)
+                {
+                    var material = _renderer.sharedMaterial;
+                    if (material == null)
+                    {
+                        _material = new Material(Shader.Find(SHADER));
+                    }
+                    else
+                    {
+                        _material = new Material(material);
+                    }
+                }
+                else
+                {
+                    _material = new Material(Shader.Find(SHADER));
+                }
+                
+                _renderer.sharedMaterial = _material;
+            }
+
+            return _material;
         }
 
         private static MeshBuilder GenerateMeshBuilder(bool[] map, int width, int height, float wallHeight)
@@ -129,6 +165,7 @@ namespace Game
         private void OnDestroy()
         {
             _mesh?.Destroy();
+            _material?.Destroy();
         }
     }
 }

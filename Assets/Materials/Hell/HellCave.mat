@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: HellCave
-  m_Shader: {fileID: -6465566751694194690, guid: 028dfab3e070fd44eb90c4d75474d0cc, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 25144be1e18de494bb776381943cd086, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
