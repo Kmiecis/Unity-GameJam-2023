@@ -3,7 +3,6 @@ using Common.Mathematics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Game
 {
@@ -23,20 +22,27 @@ namespace Game
         }
 
         public CaveGenerator.Input caveInput = CaveGenerator.Input.Default;
+        [Header("Scrolling")]
+        [Min(0.0f)] public float speed = 1.0f;
+        [Header("Damaging")]
+        [Min(0.0f)] public float delay;
+        [Min(0.0f)] public float repair;
 
         private float[] _noiseMap;
         private bool[] _caveMap;
         private readonly Dictionary<Vector2Int, Damaged> _damages = new ();
 
-        [FormerlySerializedAs("damage")] [Header("Test")]
-        public Vector2Int position;
-        public int radius;
-
+        public void Offset(float dy)
+        {
+            caveInput.dy -= dy;
+        }
+        
         public void Damage(int x, int y, int radius)
         {
             var rr = radius * radius;
             var rrr = 1.0f / rr;
-            
+
+            var dkey = Mathf.RoundToInt(caveInput.dy);
             for (int b = -radius; b < +radius; b++)
             {
                 for (int a = -radius; a < +radius; a++)
@@ -48,18 +54,27 @@ namespace Game
                         if (key.x > -1 && key.y > -1 &&
                             key.x < caveInput.width && key.y < caveInput.height)
                         {
-                            _damages[key] = new Damaged { delay = caveInput.delay, offset = distance * rrr };
+                            key.y -= dkey;
+                            _damages[key] = new Damaged { delay = delay, offset = distance * rrr };
                         }
                     }
                 }
             }
         }
+
+        private void ApplyOffset()
+        {
+            var dt = Time.deltaTime;
+            var doffset = speed * dt;
+            caveInput.dy -= doffset;
+        }
         
-        private void ApplyOffsets(float[] noise, int width, float repair)
+        private void ApplyDamages(float[] noise, int width, float repair)
         {
             var dt = Time.deltaTime;
             var rt = 1.0f / repair;
 
+            var dkey = Mathf.RoundToInt(caveInput.dy);
             var removed = new List<Vector2Int>();
             foreach (var kv in _damages)
             {
@@ -69,16 +84,30 @@ namespace Game
                 damage.delay -= dt;
                 if (damage.delay > 0.0f)
                 {
-                    var i = Mathx.ToIndex(key.x, key.y, width);
-                    noise[i] = 0.0f;
+                    var i = Mathx.ToIndex(key.x, key.y + dkey, width);
+                    if (i > -1 && i < noise.Length)
+                    {
+                        noise[i] = 0.0f;
+                    }
+                    else
+                    {
+                        removed.Add(key);
+                    }
                 }
                 else
                 {
                     damage.offset -= rt * dt;
                     if (damage.offset > 0.0f)
                     {
-                        var i = Mathx.ToIndex(key.x, key.y, width);
-                        noise[i] -= damage.offset;
+                        var i = Mathx.ToIndex(key.x, key.y + dkey, width);
+                        if (i > -1 && i < noise.Length)
+                        {
+                            noise[i] -= damage.offset;
+                        }
+                        else
+                        {
+                            removed.Add(key);
+                        }
                     }
                     else
                     {
@@ -92,7 +121,7 @@ namespace Game
                 _damages.Remove(key);
             }
         }
-        
+
         private void PositionGround()
         {
             if (_ground != null)
@@ -113,8 +142,9 @@ namespace Game
             }
         }
 
-        private void Build()
+        private void Rebuild()
         {
+            ApplyOffset();
             RebuildNoiseMap();
             RebuildMap();
             ApplyMap();
@@ -128,7 +158,7 @@ namespace Game
                 _noiseMap = new float[size];
             
             CaveGenerator.GenerateNoise(_noiseMap, in caveInput);
-            ApplyOffsets(_noiseMap, caveInput.width, caveInput.repair);
+            ApplyDamages(_noiseMap, caveInput.width, repair);
         }
 
         private void RebuildMap()
@@ -150,7 +180,7 @@ namespace Game
 
         private void Update()
         {
-            Build();
+            Rebuild();
         }
 
 #if UNITY_EDITOR
@@ -186,7 +216,7 @@ namespace Game
         IEnumerator BuildNextFrame()
         {
             yield return null;
-            Build();
+            Rebuild();
         }
 #endif
     }

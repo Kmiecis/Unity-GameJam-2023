@@ -33,8 +33,8 @@ namespace Game
             public float persistence;
             [Range(1.0f, 5.0f)]
             public float lacunarity;
-            public int dx;
-            public int dy;
+            public float dx;
+            public float dy;
             [Min(0.1f)]
             public float sx;
             [Min(0.1f)]
@@ -47,12 +47,6 @@ namespace Game
             public int borderHeight;
             public int borderWidth;
             public bool borderless;
-
-            [Header("Damaging")]
-            [Min(0.0f)]
-            public float delay;
-            [Min(0.0f)]
-            public float repair;
 
             public static readonly Input Default = new Input
             {

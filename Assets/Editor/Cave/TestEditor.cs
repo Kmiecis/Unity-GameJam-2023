@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace GameEditor
 {
-    [CustomEditor(typeof(CaveManager))]
-    public class CaveManagerEditor : Editor
+    [CustomEditor(typeof(Test))]
+    public class TestEditor : Editor
     {
-        private CaveManager Script
-            => (CaveManager)target;
+        private Test Script
+            => (Test)target;
 
         public override void OnInspectorGUI()
         {
@@ -16,7 +16,7 @@ namespace GameEditor
 
             if (GUILayout.Button("Damage"))
             {
-                Script.Damage(Script.position.x, Script.position.y, Script.radius);
+                Script.ApplyDamage();
             }
         }
     }
