@@ -1,7 +1,9 @@
-﻿using Common.Mathematics;
+﻿using System;
+using Common.Mathematics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Game
 {
@@ -14,26 +16,39 @@ namespace Game
         [SerializeField]
         protected Transform _ground;
 
+        private class Damaged
+        {
+            public float delay;
+            public float offset;
+        }
+
         public CaveGenerator.Input caveInput = CaveGenerator.Input.Default;
 
         private float[] _noiseMap;
         private bool[] _caveMap;
-        private readonly Dictionary<Vector2Int, float> _waits = new ();
-        private readonly Dictionary<Vector2Int, float> _offsets = new ();
+        private readonly Dictionary<Vector2Int, Damaged> _damages = new ();
 
-        public void Damage(int x, int y, int radius, int width, float delay)
+        [FormerlySerializedAs("damage")] [Header("Test")]
+        public Vector2Int position;
+        public int radius;
+
+        public void Damage(int x, int y, int radius)
         {
+            var rr = radius * radius;
+            var rrr = 1.0f / rr;
+            
             for (int b = -radius; b < +radius; b++)
             {
                 for (int a = -radius; a < +radius; a++)
                 {
-                    if (a * a + b * b < radius * radius)
+                    var distance = rr - (a * a + b * b);
+                    if (distance > 0.0f)
                     {
                         var key = new Vector2Int { x = a + x, y = b + y };
-                        if (key.x > -1 && key.y > -1)
+                        if (key.x > -1 && key.y > -1 &&
+                            key.x < caveInput.width && key.y < caveInput.height)
                         {
-                            _waits[key] = delay;
-                            _offsets[key] = 1.0f;
+                            _damages[key] = new Damaged { delay = caveInput.delay, offset = distance * rrr };
                         }
                     }
                 }
@@ -44,40 +59,38 @@ namespace Game
         {
             var dt = Time.deltaTime;
             var rt = 1.0f / repair;
-            
-            foreach (var kv in _waits)
+
+            var removed = new List<Vector2Int>();
+            foreach (var kv in _damages)
             {
                 var key = kv.Key;
-                var waitValue = kv.Value - dt;
-                if (waitValue > 0.0f)
+                var damage = kv.Value;
+                
+                damage.delay -= dt;
+                if (damage.delay > 0.0f)
                 {
-                    _waits[key] = waitValue;
                     var i = Mathx.ToIndex(key.x, key.y, width);
                     noise[i] = 0.0f;
                 }
                 else
                 {
-                    var offsetValue = _offsets[key] - rt * dt;
-                    if (offsetValue > 0.0f)
+                    damage.offset -= rt * dt;
+                    if (damage.offset > 0.0f)
                     {
-                        _offsets[key] = offsetValue;
                         var i = Mathx.ToIndex(key.x, key.y, width);
-                        noise[i] -= offsetValue;
+                        noise[i] -= damage.offset;
                     }
                     else
                     {
-                        _waits.Remove(key);
-                        _offsets.Remove(key);
+                        removed.Add(key);
                     }
                 }
             }
-        }
-        
-        private void BuildCaveMap()
-        {
-            CaveGenerator.GenerateNoise(_noiseMap, in caveInput);
-            ApplyOffsets(_noiseMap, caveInput.width, caveInput.repair);
-            CaveGenerator.GenerateMap(_noiseMap, _caveMap, in caveInput);
+
+            foreach (var key in removed)
+            {
+                _damages.Remove(key);
+            }
         }
         
         private void PositionGround()
@@ -102,23 +115,44 @@ namespace Game
 
         private void Build()
         {
-            _noiseMap = new float[caveInput.width * caveInput.height];
-            _caveMap = new bool[caveInput.width * caveInput.height];
-            
-            Rebuild();
+            RebuildNoiseMap();
+            RebuildMap();
+            ApplyMap();
             PositionGround();
         }
 
-        private void Rebuild()
+        private void RebuildNoiseMap()
         {
-            BuildCaveMap();
+            var size = caveInput.width * caveInput.height;
+            if (_noiseMap == null || _noiseMap.Length != size)
+                _noiseMap = new float[size];
             
+            CaveGenerator.GenerateNoise(_noiseMap, in caveInput);
+            ApplyOffsets(_noiseMap, caveInput.width, caveInput.repair);
+        }
+
+        private void RebuildMap()
+        {
+            var size = caveInput.width * caveInput.height;
+            if (_caveMap == null || _caveMap.Length != size)
+                _caveMap = new bool[size];
+            
+            CaveGenerator.GenerateMap(_noiseMap, _caveMap, in caveInput);
+        }
+
+        private void ApplyMap()
+        {
             if (_caveMesh != null)
                 _caveMesh.SetMap(_caveMap, caveInput.width, caveInput.height);
             if (_caveCollider != null)
-                _caveCollider.SetMap(_caveMap, caveInput.width, caveInput.height);
+                _caveCollider.SetMap(_caveMap, caveInput.width, caveInput.height, caveInput.borderless);
         }
-        
+
+        private void Update()
+        {
+            Build();
+        }
+
 #if UNITY_EDITOR
         [Header("Gizmos")]
         [SerializeField]
