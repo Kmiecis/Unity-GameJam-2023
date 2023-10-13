@@ -7,6 +7,13 @@
       "dependencies": {},
       "hash": "482e0f39e1425402dbdf45d51a66f12dd57124c4"
     },
+    "com.common.coroutines": {
+      "version": "https://github.com/Kmiecis/Unity-Package-Coroutines.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "d99650b09a1d6709980ec786e3d66a52ef9bc943"
+    },
     "com.unity.2d.animation": {
       "version": "9.0.4",
       "depth": 0,

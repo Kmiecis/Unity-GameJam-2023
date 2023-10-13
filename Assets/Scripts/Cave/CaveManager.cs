@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class CaveManager : MonoBehaviour, IOffsetted
+    public class CaveManager : MonoBehaviour, IScollable
     {
         [SerializeField]
         protected CaveMesh _caveMesh;
@@ -41,7 +41,7 @@ namespace Game
             Rebuild();
         }
 
-        public void ApplyOffset(float dy)
+        public void ApplyScroll(float dy)
         {
             caveInput.dy -= dy;
         }
