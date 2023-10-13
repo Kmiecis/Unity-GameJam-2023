@@ -10,10 +10,17 @@ public class SpellCaster : MonoBehaviour
     private Camera _camera;
 
     private bool _isMouseClicked;
+    
+    [SerializeField] private UIReloadBar reloadBar;
 
     private void Awake()
     {
         _camera = Camera.main;
+    }
+    
+    private void Start()
+    {
+        reloadBar.UpdateReloadSlider(attackCooldown - _timer, attackCooldown);
     }
 
     private void Update()
@@ -26,6 +33,7 @@ public class SpellCaster : MonoBehaviour
         if (_timer > 0)
         {
             _timer -= Time.fixedDeltaTime;
+            reloadBar.UpdateReloadSlider(attackCooldown - _timer, attackCooldown);
             return;
         }
 
@@ -40,6 +48,7 @@ public class SpellCaster : MonoBehaviour
     private void Cast()
     {
         _timer = attackCooldown;
+        reloadBar.UpdateReloadSlider(attackCooldown - _timer, attackCooldown);
         var currentPosition = transform.position;
         var mousePos = Input.mousePosition;
         mousePos.z = 0;
