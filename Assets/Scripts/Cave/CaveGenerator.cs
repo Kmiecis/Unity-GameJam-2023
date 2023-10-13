@@ -3,12 +3,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Custom.CaveGeneration
+namespace Game
 {
     public static class CaveGenerator
     {
-        private const bool kRoom = true;
-        private const bool kWall = false;
+        public const bool kRoom = true;
+        public const bool kWall = false;
+        public const float kRoomValue = 0.0f;
+        public const float kWallValue = 1.0f;
 
         private struct Line
         {
@@ -23,9 +25,22 @@ namespace Custom.CaveGeneration
             public int width;
             public int height;
             public int smooths;
-            [Range(0.45f, 0.55f)]
+            [Range(0.0f, 1.0f)]
             public float fill;
             public string seed;
+
+            [Header("Noise")]
+            public int octaves;
+            [Range(0.0f, 1.0f)]
+            public float persistence;
+            [Range(1.0f, 5.0f)]
+            public float lacunarity;
+            public float dx;
+            public float dy;
+            [Min(0.1f)]
+            public float sx;
+            [Min(0.1f)]
+            public float sy;
 
             [Header("Map processing")]
             public int wallSizeThreshold;
@@ -42,21 +57,31 @@ namespace Custom.CaveGeneration
                 smooths = 4,
                 fill = 0.5f,
                 seed = "",
+                octaves = 1,
+                persistence = 0.5f,
+                lacunarity = 2.0f,
+                sx = 1.0f,
+                sy = 1.0f,
                 wallSizeThreshold = 5,
                 roomSizeThreshold = 5,
                 passageWidth = 2,
                 borderHeight = 2,
                 borderWidth = 2,
-                borderless = false
+                borderless = false,
             };
         }
 
-        public static void Generate(bool[] map, in Input input)
+        public static void GenerateNoise(float[] noise, in Input input)
         {
-            Noisex.GetRandomMap(map, input.width, input.height, input.fill, input.seed.GetHashCode());
-            Noisex.SmoothRandomMap(map, input.width, input.height, input.smooths);
-            ApplyBorder(map, input.width, input.height, input.borderHeight, input.borderWidth, input.borderless);
-
+            Noisex.GetNoiseMap(noise, input.width, input.height, input.octaves, input.persistence, input.lacunarity, input.dx, input.dy, input.sx, input.sy, input.seed.GetHashCode());
+            ApplyBorder(noise, input.width, input.height, input.borderHeight, input.borderWidth, input.borderless);
+        }
+        
+        public static void GenerateMap(float[] noise, bool[] map, in Input input)
+        {
+            ConvertNoiseToMap(noise, map, input.width, input.height, input.fill);
+    
+            /*
             var roomRegions = GetRegionsByType(map, input.width, input.height, kRoom);
             var removedRoomRegions = RemoveRegionsUnderThreshold(roomRegions, input.roomSizeThreshold);
             FlipRegions(removedRoomRegions, map, input.width);
@@ -68,12 +93,25 @@ namespace Custom.CaveGeneration
             var rooms = CreateRooms(roomRegions, map, input.width, input.height);
             var passages = FindPassages(rooms);
             ClearPassages(passages, map, input.width, input.height, input.passageWidth, input.borderWidth, input.borderHeight);
+            */
         }
 
-        private static void ApplyBorder(bool[] map, int width, int height, int borderWidth, int borderHeight, bool borderless)
+        private static void ConvertNoiseToMap(float[] noise, bool[] map, int width, int height, float fill)
+        {
+            for (int y = 0; y < height; ++y)
+            {
+                for (int x = 0; x < width; ++x)
+                {
+                    int i = Mathx.ToIndex(x, y, width);
+                    map[i] = noise[i] < (1.0f - fill);
+                }
+            }
+        }
+
+        private static void ApplyBorder(float[] map, int width, int height, int borderWidth, int borderHeight, bool borderless)
         {
             var bheight = Math.Abs(borderHeight);
-            var bheightType = borderHeight > 0 ? kWall : kRoom;
+            var bheightType = borderHeight > 0 ? kWallValue : kRoomValue;
             if (bheight != 0)
             {
                 for (int y = 0; y < height; y++)
@@ -93,7 +131,7 @@ namespace Custom.CaveGeneration
             }
 
             var bwidth = Math.Abs(borderWidth);
-            var bwidthType = borderWidth > 0 ? kWall : kRoom;
+            var bwidthType = borderWidth > 0 ? kWallValue : kRoomValue;
             if (bwidth != 0)
             {
                 for (int x = 0; x < width; x++)
@@ -117,19 +155,19 @@ namespace Custom.CaveGeneration
                 for (int y = 0; y < height; y++)
                 {
                     int i = Mathx.ToIndex(0, y, width);
-                    map[i] = kRoom;
+                    map[i] = kRoomValue;
 
                     int j = Mathx.ToIndex(width - 1, y, width);
-                    map[j] = kRoom;
+                    map[j] = kRoomValue;
                 }
 
                 for (int x = 0; x < width; x++)
                 {
                     int i = Mathx.ToIndex(x, 0, width);
-                    map[i] = kRoom;
+                    map[i] = kRoomValue;
 
                     int j = Mathx.ToIndex(x, height - 1, width);
-                    map[j] = kRoom;
+                    map[j] = kRoomValue;
                 }
             }
         }

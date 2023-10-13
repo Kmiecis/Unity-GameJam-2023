@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Custom.CaveGeneration
+namespace Game
 {
     public class CaveCollider : MonoBehaviour
     {
@@ -18,18 +18,21 @@ namespace Custom.CaveGeneration
         [SerializeField]
         protected PolygonCollider2D _collider;
 
-        public void SetMap(bool[] map, int width, int height)
+        public void SetMap(bool[] map, int width, int height, bool borderless)
         {
             if (_collider != null && map != null)
             {
                 var paths = GetColliderPaths(map, width, height);
-                _collider.pathCount = paths.Count + 1;
+                _collider.pathCount = paths.Count + (borderless ? 0 : 1);
 
                 for (int i = 0; i < paths.Count; ++i)
                     _collider.SetPath(i, paths[i]);
 
-                var border = GetBorderPath(map, width, height);
-                _collider.SetPath(paths.Count, border);
+                if (!borderless)
+                {
+                    var border = GetBorderPath(map, width, height);
+                    _collider.SetPath(paths.Count, border);
+                }
             }
         }
 
