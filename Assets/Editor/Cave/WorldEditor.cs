@@ -14,9 +14,9 @@ namespace GameEditor
         {
             base.OnInspectorGUI();
 
-            if (GUILayout.Button("Random"))
+            if (GUILayout.Button("Next"))
             {
-                Script.RandomLevel();
+                Script.NextLevel();
             }
         }
     }

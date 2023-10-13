@@ -9,7 +9,7 @@ namespace Game
         
         public void NextLevel()
         {
-            
+            levelManager.SetNextLevel(caveManager);
         }
 
         public void RandomLevel()

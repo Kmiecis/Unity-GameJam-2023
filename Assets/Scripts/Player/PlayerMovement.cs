@@ -1,20 +1,22 @@
-using System;
+using Game;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
     public CharacterController2D controller;
     public GameObject model;
-    public Transform transform;
     public float runSpeed = 40f;
 
     private float _horizontalMove;
     private bool _jump;
     private Animator _animator;
 
+    private ScrollManager _scroll;
+
     private void Awake()
     {
         _animator = model.GetComponent<Animator>();
+        _scroll = FindObjectOfType<ScrollManager>();
     }
 
     private void Update()
@@ -33,14 +35,31 @@ public class PlayerMovement : MonoBehaviour
     {
         controller.Move(_horizontalMove * Time.fixedDeltaTime, _jump);
         _jump = false;
+        
         UpdateLocalScale();
+        UpdateVerticalPosition();
     }
 
     private void UpdateLocalScale()
     {
         if (_horizontalMove != 0)
         {
-            transform.localScale = new Vector3(Mathf.Abs(transform.localScale.x) * (_horizontalMove > 0 ? 1 : -1), transform.localScale.y);
+            transform.localScale = new Vector3(
+                Mathf.Abs(transform.localScale.x) * (_horizontalMove > 0 ? 1 : -1),
+                transform.localScale.y
+            );
+        }
+    }
+
+    private void UpdateVerticalPosition()
+    {
+        var position = transform.position;
+        if (position.y > 0)
+        {
+            _scroll.ChangeOffset(position.y);
+            
+            position.y = 0.0f;
+            transform.position = position;
         }
     }
 
