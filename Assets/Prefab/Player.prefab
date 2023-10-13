@@ -195,7 +195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackCooldown: 0.2
-  projectilePrefab: {fileID: 5814947962510328328, guid: bd51fcd9abef3a44bb4e0a6b680d85c7, type: 3}
+  projectilePrefab: {fileID: 940317502609674679, guid: dd333a581bc979147949833b141e38bb, type: 3}
 --- !u!1 &8776150226844737035
 GameObject:
   m_ObjectHideFlags: 0
