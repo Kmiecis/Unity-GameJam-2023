@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef2364f3b0ae4937b3d44d11c6e292c7, type: 3}
+  m_Name: Egypt
+  m_EditorClassIdentifier: 
+  _caveMaterial: {fileID: 2100000, guid: 0a9b19df9db3acb4fa19057702c2da20, type: 2}
+  _caveBackMaterial: {fileID: 2100000, guid: f07d0a7419b77a84c9a38eca48db661e, type: 2}
+  _backgroundMaterial: {fileID: 2100000, guid: 07bde921aeb482c45904096256a816f0, type: 2}
