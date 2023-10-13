@@ -3,6 +3,7 @@ using Common.Mathematics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Game
 {
@@ -22,11 +23,13 @@ namespace Game
         }
 
         public CaveGenerator.Input caveInput = CaveGenerator.Input.Default;
+        [FormerlySerializedAs("scrollSeed")]
+        [FormerlySerializedAs("speed")]
         [Header("Scrolling")]
-        [Min(0.0f)] public float speed = 1.0f;
+        [Min(0.0f)] public float scrollSpeed = 1.0f;
         [Header("Damaging")]
-        [Min(0.0f)] public float delay;
-        [Min(0.0f)] public float repair;
+        [Min(0.0f)] public float damageDelay = 1.0f;
+        [Min(0.0f)] public float damageRepair = 1.0f;
 
         private float[] _noiseMap;
         private bool[] _caveMap;
@@ -42,7 +45,7 @@ namespace Game
             var rr = radius * radius;
             var rrr = 1.0f / rr;
 
-            var dkey = Mathf.RoundToInt(caveInput.dy);
+            var dkey = Mathf.FloorToInt(caveInput.dy);
             for (int b = -radius; b < +radius; b++)
             {
                 for (int a = -radius; a < +radius; a++)
@@ -55,17 +58,17 @@ namespace Game
                             key.x < caveInput.width && key.y < caveInput.height)
                         {
                             key.y -= dkey;
-                            _damages[key] = new Damaged { delay = delay, offset = distance * rrr };
+                            _damages[key] = new Damaged { delay = damageDelay, offset = distance * rrr };
                         }
                     }
                 }
             }
         }
 
-        private void ApplyOffset()
+        private void ApplyScroll()
         {
             var dt = Time.deltaTime;
-            var doffset = speed * dt;
+            var doffset = scrollSpeed * dt;
             caveInput.dy -= doffset;
         }
         
@@ -74,7 +77,7 @@ namespace Game
             var dt = Time.deltaTime;
             var rt = 1.0f / repair;
 
-            var dkey = Mathf.RoundToInt(caveInput.dy);
+            var dkey = Mathf.FloorToInt(caveInput.dy);
             var removed = new List<Vector2Int>();
             foreach (var kv in _damages)
             {
@@ -142,12 +145,22 @@ namespace Game
             }
         }
 
+        private void PositionCave()
+        {
+            if (_caveMesh != null)
+            {
+                var dy = Mathx.Frac(caveInput.dy);
+                _caveMesh.transform.localPosition = new Vector3 { y = dy };
+            }
+        }
+
         private void Rebuild()
         {
-            ApplyOffset();
+            ApplyScroll();
             RebuildNoiseMap();
             RebuildMap();
             ApplyMap();
+            PositionCave();
             PositionGround();
         }
 
@@ -156,9 +169,12 @@ namespace Game
             var size = caveInput.width * caveInput.height;
             if (_noiseMap == null || _noiseMap.Length != size)
                 _noiseMap = new float[size];
-            
-            CaveGenerator.GenerateNoise(_noiseMap, in caveInput);
-            ApplyDamages(_noiseMap, caveInput.width, repair);
+
+            var noiseCaveInput = caveInput;
+            noiseCaveInput.dy = Mathf.Floor(noiseCaveInput.dy);
+            noiseCaveInput.dx = Mathf.Floor(noiseCaveInput.dx);
+            CaveGenerator.GenerateNoise(_noiseMap, in noiseCaveInput);
+            ApplyDamages(_noiseMap, noiseCaveInput.width, damageRepair);
         }
 
         private void RebuildMap()

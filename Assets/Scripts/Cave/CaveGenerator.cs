@@ -9,6 +9,8 @@ namespace Game
     {
         public const bool kRoom = true;
         public const bool kWall = false;
+        public const float kRoomValue = 0.0f;
+        public const float kWallValue = 1.0f;
 
         private struct Line
         {
@@ -72,12 +74,12 @@ namespace Game
         public static void GenerateNoise(float[] noise, in Input input)
         {
             Noisex.GetNoiseMap(noise, input.width, input.height, input.octaves, input.persistence, input.lacunarity, input.dx, input.dy, input.sx, input.sy, input.seed.GetHashCode());
+            ApplyBorder(noise, input.width, input.height, input.borderHeight, input.borderWidth, input.borderless);
         }
         
         public static void GenerateMap(float[] noise, bool[] map, in Input input)
         {
             ConvertNoiseToMap(noise, map, input.width, input.height, input.fill);
-            ApplyBorder(map, input.width, input.height, input.borderHeight, input.borderWidth, input.borderless);
     
             /*
             var roomRegions = GetRegionsByType(map, input.width, input.height, kRoom);
@@ -101,15 +103,15 @@ namespace Game
                 for (int x = 0; x < width; ++x)
                 {
                     int i = Mathx.ToIndex(x, y, width);
-                    map[i] = noise[i] < fill;
+                    map[i] = noise[i] < (1.0f - fill);
                 }
             }
         }
 
-        private static void ApplyBorder(bool[] map, int width, int height, int borderWidth, int borderHeight, bool borderless)
+        private static void ApplyBorder(float[] map, int width, int height, int borderWidth, int borderHeight, bool borderless)
         {
             var bheight = Math.Abs(borderHeight);
-            var bheightType = borderHeight > 0 ? kWall : kRoom;
+            var bheightType = borderHeight > 0 ? kWallValue : kRoomValue;
             if (bheight != 0)
             {
                 for (int y = 0; y < height; y++)
@@ -129,7 +131,7 @@ namespace Game
             }
 
             var bwidth = Math.Abs(borderWidth);
-            var bwidthType = borderWidth > 0 ? kWall : kRoom;
+            var bwidthType = borderWidth > 0 ? kWallValue : kRoomValue;
             if (bwidth != 0)
             {
                 for (int x = 0; x < width; x++)
@@ -153,19 +155,19 @@ namespace Game
                 for (int y = 0; y < height; y++)
                 {
                     int i = Mathx.ToIndex(0, y, width);
-                    map[i] = kRoom;
+                    map[i] = kRoomValue;
 
                     int j = Mathx.ToIndex(width - 1, y, width);
-                    map[j] = kRoom;
+                    map[j] = kRoomValue;
                 }
 
                 for (int x = 0; x < width; x++)
                 {
                     int i = Mathx.ToIndex(x, 0, width);
-                    map[i] = kRoom;
+                    map[i] = kRoomValue;
 
                     int j = Mathx.ToIndex(x, height - 1, width);
-                    map[j] = kRoom;
+                    map[j] = kRoomValue;
                 }
             }
         }
