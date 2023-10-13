@@ -184,7 +184,7 @@ namespace Game
         private void ApplyMap()
         {
             if (_caveMesh != null)
-                _caveMesh.SetMap(_caveMap, caveInput.width, caveInput.height);
+                _caveMesh.SetMap(_caveMap, caveInput.width, caveInput.height, caveInput.dy);
             if (_caveCollider != null)
                 _caveCollider.SetMap(_caveMap, caveInput.width, caveInput.height, caveInput.borderless);
         }
