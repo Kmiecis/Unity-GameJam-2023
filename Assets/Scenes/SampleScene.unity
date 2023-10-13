@@ -763,6 +763,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _filter: {fileID: 43468490}
+  _renderer: {fileID: 43468489}
   _wallHeight: 1
 --- !u!43 &254211518
 Mesh:
