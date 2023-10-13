@@ -14,7 +14,7 @@ namespace Game
         [SerializeField]
         protected CaveCollider _caveCollider;
         [SerializeField]
-        protected Transform _ground;
+        protected MeshRenderer _groundRenderer;
 
         private class Damaged
         {
@@ -31,6 +31,15 @@ namespace Game
         private bool[] _caveMap;
         private bool[] _caveBackMap;
         private readonly Dictionary<Vector2Int, Damaged> _damages = new ();
+
+        public void ApplyLevel(Level level)
+        {
+            _caveMesh.SetSharedMaterial(level.CaveMaterial);
+            _caveBackMesh.SetSharedMaterial(level.CaveBackMaterial);
+            _groundRenderer.sharedMaterial = level.BackgroundMaterial;
+            
+            Rebuild();
+        }
 
         public void ApplyOffset(float dy)
         {
@@ -121,21 +130,23 @@ namespace Game
 
         private void PositionGround()
         {
-            if (_ground != null)
+            if (_groundRenderer != null)
             {
+                var ground = _groundRenderer.transform;
+                
                 var width = (caveInput.width - 1);
                 var height = (caveInput.height - 1);
 
-                var localPosition = _ground.localPosition;
-                var localScale = _ground.localScale;
+                var localPosition = ground.localPosition;
+                var localScale = ground.localScale;
 
                 localPosition.x = width * 0.5f;
                 localPosition.y = height * 0.5f;
                 localScale.x = width;
                 localScale.y = height;
 
-                _ground.localPosition = localPosition;
-                _ground.localScale = localScale;
+                ground.localPosition = localPosition;
+                ground.localScale = localScale;
             }
         }
 
@@ -203,21 +214,5 @@ namespace Game
         {
             Rebuild();
         }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            if (gameObject.activeInHierarchy)
-            {
-                StartCoroutine(BuildNextFrame());
-            }
-        }
-
-        IEnumerator BuildNextFrame()
-        {
-            yield return null;
-            Rebuild();
-        }
-#endif
     }
 }

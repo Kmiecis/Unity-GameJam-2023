@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,12 +11,16 @@ namespace Game
     
     public class World : MonoBehaviour
     {
+        public LevelManager levelManager;
         public CaveManager caveManager;
+        
         [Header("Scroll")]
         public float speed = 1.0f;
 
         private float _offset;
         private List<IOffsetted> _offsetteds = new();
+
+        private Level _current;
 
         public float Offset
             => _offset;
@@ -42,9 +47,14 @@ namespace Game
             ChangeOffset(speed * dt);
         }
 
-        private void Start()
+        private void Awake()
         {
             AddOffsetted(caveManager);
+        }
+
+        private void Start()
+        {
+            levelManager.SetInitialLevel(caveManager);
         }
 
         private void Update()
