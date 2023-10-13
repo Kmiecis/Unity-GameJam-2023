@@ -9,6 +9,8 @@ public class Projectile : MonoBehaviour
     private CaveManager _caveManager;
 
     private Rigidbody2D _body;
+
+    public GameObject explosionPrefab;
     
     private void Awake()
     {
@@ -28,6 +30,7 @@ public class Projectile : MonoBehaviour
     {
         var position = transform.position;
         _caveManager.Damage((int) position.x, (int) position.y, explosionRadius);
+        Instantiate(explosionPrefab, position, Quaternion.identity);
         gameObject.Destroy();
     }
 }
