@@ -4,19 +4,19 @@ using UnityEngine;
 
 namespace GameEditor
 {
-    [CustomEditor(typeof(Test))]
-    public class TestEditor : Editor
+    [CustomEditor(typeof(World))]
+    public class WorldEditor : Editor
     {
-        private Test Script
-            => (Test)target;
+        private World Script
+            => (World)target;
 
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
 
-            if (GUILayout.Button("Damage"))
+            if (GUILayout.Button("Random"))
             {
-                Script.ApplyDamage();
+                Script.RandomLevel();
             }
         }
     }

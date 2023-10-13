@@ -1,4 +1,6 @@
-﻿using Common;
+﻿using System;
+using Common;
+using Common.Coroutines;
 using Common.Extensions;
 using Common.Mathematics;
 using UnityEngine;
@@ -8,26 +10,39 @@ namespace Game
     public class CaveMesh : MonoBehaviour
     {
         private readonly int OFFSET_ID = Shader.PropertyToID("_BaseMap");
-        
+        private readonly int DISSOLVE_ID = Shader.PropertyToID("_Dissolve");
+        private readonly int DISSOLVE_FLIP_ID = Shader.PropertyToID("_DissolveFlip");
+
+        [SerializeField]
+        protected CaveMesh _prefab;
         [Header("Components")]
         [SerializeField]
         protected MeshFilter _filter;
         [SerializeField]
         protected MeshRenderer _renderer;
+        [SerializeField]
+        protected CaveCollider _collider;
         [Header("Input")]
         [SerializeField]
         protected float _wallHeight = 1.0f;
+        [SerializeField]
+        protected int _renderQueue = 2450;
 
         private Mesh _mesh;
         private Material _material;
 
-        public void SetMap(bool[] map, int width, int height, float dy)
+        public void SetMap(bool[] map, int width, int height, bool borderless, float dy)
         {
             _mesh = GetSharedMesh();
             if (_mesh != null && map != null)
             {
                 var builder = GenerateMeshBuilder(map, width, height, _wallHeight);
                 builder.Overwrite(_mesh);
+            }
+
+            if (_collider != null)
+            {
+                _collider.SetMap(map, width, height, borderless);
             }
             
             var scale = _material.GetTextureScale(OFFSET_ID);
@@ -53,6 +68,42 @@ namespace Game
             UObject.Destroy(ref _material);
 
             _renderer.sharedMaterial = _material = new Material(material);
+            _material.renderQueue = _renderQueue;
+        }
+
+        public bool HasSharedMaterial()
+        {
+            return _material != null;
+        }
+
+        public void Disintegrate(Action<CaveMesh> callback)
+        {
+            _material.SetFloat(DISSOLVE_FLIP_ID, 1.0f);
+            _material.SetFloat(DISSOLVE_ID, 0.0f);
+            _material.CoFloat(1.0f, DISSOLVE_ID, 1.0f, Easings.SmoothStep)
+                .Then(() => callback(this))
+                .Start(this);
+        }
+
+        public void Integrate()
+        {
+            _material.SetFloat(DISSOLVE_FLIP_ID, 0.0f);
+            _material.SetFloat(DISSOLVE_ID, 1.0f);
+            _material.CoFloat(0.0f, DISSOLVE_ID, 1.0f, Easings.SmoothStep)
+                .Start(this);
+        }
+
+        public CaveMesh Copy()
+        {
+            var copy = Instantiate(_prefab, transform.parent);
+            var currentIndex = transform.GetSiblingIndex();
+            copy.transform.SetSiblingIndex(currentIndex + 1);
+            return copy;
+        }
+
+        public void Destroy()
+        {
+            gameObject.Destroy();
         }
 
         private static MeshBuilder GenerateMeshBuilder(bool[] map, int width, int height, float wallHeight)

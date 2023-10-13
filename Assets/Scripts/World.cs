@@ -7,7 +7,15 @@ namespace Game
         public LevelManager levelManager;
         public CaveManager caveManager;
         
-        private Level _current;
+        public void NextLevel()
+        {
+            
+        }
+
+        public void RandomLevel()
+        {
+            levelManager.SetRandomLevel(caveManager);
+        }
 
         private void Start()
         {

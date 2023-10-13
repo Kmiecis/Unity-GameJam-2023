@@ -1,6 +1,7 @@
-﻿using Common.Mathematics;
-using System.Collections;
+﻿using System;
+using Common.Mathematics;
 using System.Collections.Generic;
+using Common.Extensions;
 using UnityEngine;
 
 namespace Game
@@ -12,9 +13,7 @@ namespace Game
         [SerializeField]
         protected CaveMesh _caveBackMesh;
         [SerializeField]
-        protected CaveCollider _caveCollider;
-        [SerializeField]
-        protected MeshRenderer _groundRenderer;
+        protected CaveBackground _caveBackground;
 
         private class Damaged
         {
@@ -32,11 +31,48 @@ namespace Game
         private bool[] _caveBackMap;
         private readonly Dictionary<Vector2Int, Damaged> _damages = new ();
 
+        private readonly List<CaveMesh> _caveMeshes = new ();
+        private readonly List<CaveMesh> _caveBackMeshes = new();
+
         public void ApplyLevel(Level level)
         {
-            _caveMesh.SetSharedMaterial(level.CaveMaterial);
-            _caveBackMesh.SetSharedMaterial(level.CaveBackMaterial);
-            _groundRenderer.sharedMaterial = level.BackgroundMaterial;
+            void RemoveCaveMesh(CaveMesh caveMesh)
+            {
+                _caveMeshes.Remove(caveMesh);
+                caveMesh.gameObject.Destroy();
+            }
+
+            void RemoveCaveBackMesh(CaveMesh caveMesh)
+            {
+                _caveBackMeshes.Remove(caveMesh);
+                caveMesh.gameObject.Destroy();
+            }
+
+            CaveMesh SwapCaveMesh(CaveMesh caveMesh, Action<CaveMesh> callback, Material material)
+            {
+                if (caveMesh.HasSharedMaterial())
+                {
+                    caveMesh.Disintegrate(callback);
+                    caveMesh = caveMesh.Copy();
+                }
+                caveMesh.SetSharedMaterial(material);
+                caveMesh.Integrate();
+                return caveMesh;
+            }
+
+            _caveMesh = SwapCaveMesh(_caveMesh, RemoveCaveMesh, level.CaveMaterial);
+            _caveMeshes.Add(_caveMesh);
+
+            _caveBackMesh = SwapCaveMesh(_caveBackMesh, RemoveCaveBackMesh, level.CaveBackMaterial);
+            _caveBackMeshes.Add(_caveBackMesh);
+
+            if (_caveBackground.HasSharedMaterial())
+            {
+                _caveBackground.Disintegrate();
+                _caveBackground = _caveBackground.Copy();
+            }
+            _caveBackground.SetSharedMaterial(level.BackgroundMaterial);
+            _caveBackground.Integrate();
             
             Rebuild();
         }
@@ -87,10 +123,11 @@ namespace Game
                 var key = kv.Key;
                 var damage = kv.Value;
                 
+                var i = Mathx.ToIndex(key.x, key.y + dkey, width);
+                
                 damage.delay -= dt;
                 if (damage.delay > 0.0f)
                 {
-                    var i = Mathx.ToIndex(key.x, key.y + dkey, width);
                     if (i > -1 && i < noise.Length)
                     {
                         noise[i] = 0.0f;
@@ -105,7 +142,6 @@ namespace Game
                     damage.offset -= rt * dt;
                     if (damage.offset > 0.0f)
                     {
-                        var i = Mathx.ToIndex(key.x, key.y + dkey, width);
                         if (i > -1 && i < noise.Length)
                         {
                             noise[i] -= damage.offset;
@@ -128,40 +164,21 @@ namespace Game
             }
         }
 
-        private void PositionGround()
-        {
-            if (_groundRenderer != null)
-            {
-                var ground = _groundRenderer.transform;
-                
-                var width = (caveInput.width - 1);
-                var height = (caveInput.height - 1);
-
-                var localPosition = ground.localPosition;
-                var localScale = ground.localScale;
-
-                localPosition.x = width * 0.5f;
-                localPosition.y = height * 0.5f;
-                localScale.x = width;
-                localScale.y = height;
-
-                ground.localPosition = localPosition;
-                ground.localScale = localScale;
-            }
-        }
-
         private void PositionCave()
         {
             var dy = Mathx.Frac(caveInput.dy);
-            var pos = new Vector3 { y = dy };
-            
-            if (_caveMesh != null)
+
+            foreach (var caveMesh in _caveMeshes)
             {
-                _caveMesh.transform.localPosition = pos;
+                var position = caveMesh.transform.localPosition;
+                position.y = dy;
+                caveMesh.transform.localPosition = position;
             }
-            if (_caveBackMesh != null)
+            foreach (var caveMesh in _caveBackMeshes)
             {
-                _caveBackMesh.transform.localPosition = pos;
+                var position = caveMesh.transform.localPosition;
+                position.y = dy;
+                caveMesh.transform.localPosition = position;
             }
         }
 
@@ -171,7 +188,6 @@ namespace Game
             RebuildMap();
             ApplyMap();
             PositionCave();
-            PositionGround();
         }
 
         private void RebuildNoiseMap()
@@ -202,12 +218,15 @@ namespace Game
 
         private void ApplyMap()
         {
-            if (_caveMesh != null)
-                _caveMesh.SetMap(_caveMap, caveInput.width, caveInput.height, caveInput.dy);
-            if (_caveBackMesh != null)
-                _caveBackMesh.SetMap(_caveBackMap, caveInput.width, caveInput.height, caveInput.dy);
-            if (_caveCollider != null)
-                _caveCollider.SetMap(_caveMap, caveInput.width, caveInput.height, caveInput.borderless);
+            foreach (var caveMesh in _caveMeshes)
+            {
+                caveMesh.SetMap(_caveMap, caveInput.width, caveInput.height, caveInput.borderless, caveInput.dy);
+            }
+            
+            foreach (var caveMesh in _caveBackMeshes)
+            {
+                caveMesh.SetMap(_caveBackMap, caveInput.width, caveInput.height, caveInput.borderless, caveInput.dy);
+            }
         }
 
         private void Update()
