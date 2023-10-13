@@ -1,5 +1,4 @@
-﻿using System;
-using Common.Mathematics;
+﻿using Common.Mathematics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,7 +6,7 @@ using UnityEngine.Serialization;
 
 namespace Game
 {
-    public class CaveManager : MonoBehaviour
+    public class CaveManager : MonoBehaviour, IOffsetted
     {
         [SerializeField]
         protected CaveMesh _caveMesh;
@@ -35,13 +34,17 @@ namespace Game
         private bool[] _caveMap;
         private readonly Dictionary<Vector2Int, Damaged> _damages = new ();
 
-        public void Offset(float dy)
+        public void ApplyOffset(float dy)
         {
             caveInput.dy -= dy;
         }
         
         public void Damage(int x, int y, int radius)
         {
+            var position = transform.position;
+            x -= Mathf.RoundToInt(position.x);
+            y -= Mathf.RoundToInt(position.y);
+            
             var rr = radius * radius;
             var rrr = 1.0f / rr;
 
@@ -65,13 +68,6 @@ namespace Game
             }
         }
 
-        private void ApplyScroll()
-        {
-            var dt = Time.deltaTime;
-            var doffset = scrollSpeed * dt;
-            caveInput.dy -= doffset;
-        }
-        
         private void ApplyDamages(float[] noise, int width, float repair)
         {
             var dt = Time.deltaTime;
@@ -156,7 +152,6 @@ namespace Game
 
         private void Rebuild()
         {
-            ApplyScroll();
             RebuildNoiseMap();
             RebuildMap();
             ApplyMap();
