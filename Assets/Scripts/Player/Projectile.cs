@@ -13,7 +13,7 @@ public class Projectile : MonoBehaviour
     private void Awake()
     {
         _body = GetComponent<Rigidbody2D>();
-        _caveManager = GameObject.Find("CaveManager").GetComponent<CaveManager>();
+        _caveManager = FindObjectOfType<CaveManager>();
     }
 
     public void SetData(Vector3 direction)

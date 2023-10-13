@@ -7,7 +7,6 @@ namespace Game
 {
     public class CaveMesh : MonoBehaviour
     {
-        private const string SHADER = "Shader Graphs/Standard";
         private readonly int OFFSET_ID = Shader.PropertyToID("_BaseMap");
         
         [Header("Components")]
@@ -31,9 +30,8 @@ namespace Game
                 builder.Overwrite(_mesh);
             }
             
-            var material = GetSharedMaterial();
-            var scale = material.GetTextureScale(OFFSET_ID);
-            material.SetTextureOffset(OFFSET_ID, new Vector2 { y = -Mathf.FloorToInt(dy) * scale.y / height });
+            var scale = _material.GetTextureScale(OFFSET_ID);
+            _material.SetTextureOffset(OFFSET_ID, new Vector2 { y = -Mathf.FloorToInt(dy) * scale.y / height });
         }
 
         private Mesh GetSharedMesh()
@@ -50,31 +48,11 @@ namespace Game
             return null;
         }
         
-        private Material GetSharedMaterial()
+        public void SetSharedMaterial(Material material)
         {
-            if (_material == null)
-            {
-                if (_renderer != null)
-                {
-                    var material = _renderer.sharedMaterial;
-                    if (material == null)
-                    {
-                        _material = new Material(Shader.Find(SHADER));
-                    }
-                    else
-                    {
-                        _material = new Material(material);
-                    }
-                }
-                else
-                {
-                    _material = new Material(Shader.Find(SHADER));
-                }
-                
-                _renderer.sharedMaterial = _material;
-            }
+            UObject.Destroy(ref _material);
 
-            return _material;
+            _renderer.sharedMaterial = _material = new Material(material);
         }
 
         private static MeshBuilder GenerateMeshBuilder(bool[] map, int width, int height, float wallHeight)
