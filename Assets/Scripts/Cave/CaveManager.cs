@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Game
 {
@@ -10,6 +9,8 @@ namespace Game
     {
         [SerializeField]
         protected CaveMesh _caveMesh;
+        [SerializeField]
+        protected CaveMesh _caveBackMesh;
         [SerializeField]
         protected CaveCollider _caveCollider;
         [SerializeField]
@@ -22,16 +23,13 @@ namespace Game
         }
 
         public CaveGenerator.Input caveInput = CaveGenerator.Input.Default;
-        [FormerlySerializedAs("scrollSeed")]
-        [FormerlySerializedAs("speed")]
-        [Header("Scrolling")]
-        [Min(0.0f)] public float scrollSpeed = 1.0f;
         [Header("Damaging")]
         [Min(0.0f)] public float damageDelay = 1.0f;
         [Min(0.0f)] public float damageRepair = 1.0f;
 
         private float[] _noiseMap;
         private bool[] _caveMap;
+        private bool[] _caveBackMap;
         private readonly Dictionary<Vector2Int, Damaged> _damages = new ();
 
         public void ApplyOffset(float dy)
@@ -143,10 +141,16 @@ namespace Game
 
         private void PositionCave()
         {
+            var dy = Mathx.Frac(caveInput.dy);
+            var pos = new Vector3 { y = dy };
+            
             if (_caveMesh != null)
             {
-                var dy = Mathx.Frac(caveInput.dy);
-                _caveMesh.transform.localPosition = new Vector3 { y = dy };
+                _caveMesh.transform.localPosition = pos;
+            }
+            if (_caveBackMesh != null)
+            {
+                _caveBackMesh.transform.localPosition = pos;
             }
         }
 
@@ -169,15 +173,19 @@ namespace Game
             noiseCaveInput.dy = Mathf.Floor(noiseCaveInput.dy);
             noiseCaveInput.dx = Mathf.Floor(noiseCaveInput.dx);
             CaveGenerator.GenerateNoise(_noiseMap, in noiseCaveInput);
-            ApplyDamages(_noiseMap, noiseCaveInput.width, damageRepair);
         }
 
         private void RebuildMap()
         {
             var size = caveInput.width * caveInput.height;
             if (_caveMap == null || _caveMap.Length != size)
+            {
                 _caveMap = new bool[size];
+                _caveBackMap = new bool[size];
+            }
             
+            CaveGenerator.GenerateMap(_noiseMap, _caveBackMap, in caveInput);
+            ApplyDamages(_noiseMap, caveInput.width, damageRepair);
             CaveGenerator.GenerateMap(_noiseMap, _caveMap, in caveInput);
         }
 
@@ -185,6 +193,8 @@ namespace Game
         {
             if (_caveMesh != null)
                 _caveMesh.SetMap(_caveMap, caveInput.width, caveInput.height, caveInput.dy);
+            if (_caveBackMesh != null)
+                _caveBackMesh.SetMap(_caveBackMap, caveInput.width, caveInput.height, caveInput.dy);
             if (_caveCollider != null)
                 _caveCollider.SetMap(_caveMap, caveInput.width, caveInput.height, caveInput.borderless);
         }
@@ -195,33 +205,12 @@ namespace Game
         }
 
 #if UNITY_EDITOR
-        [Header("Gizmos")]
-        [SerializeField]
-        protected bool _drawCaveMap;
-
-        private void OnDrawGizmos()
-        {
-            if (_drawCaveMap)
-            {
-                var width = caveInput.width;
-                var height = caveInput.height;
-
-                for (int y = 0; y < height; y++)
-                {
-                    for (int x = 0; x < width; x++)
-                    {
-                        int i = Mathx.ToIndex(x, y, width);
-                        bool isWall = _caveMap[i];
-                        Gizmos.color = isWall ? Color.black : Color.white;
-                        Gizmos.DrawWireSphere(new Vector3(x, y, 0.0f), 0.2f);
-                    }
-                }
-            }
-        }
-
         private void OnValidate()
         {
-            StartCoroutine(BuildNextFrame());
+            if (gameObject.activeInHierarchy)
+            {
+                StartCoroutine(BuildNextFrame());
+            }
         }
 
         IEnumerator BuildNextFrame()

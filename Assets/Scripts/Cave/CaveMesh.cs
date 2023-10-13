@@ -32,7 +32,8 @@ namespace Game
             }
             
             var material = GetSharedMaterial();
-            material.SetTextureOffset(OFFSET_ID, new Vector2 { y = -Mathf.FloorToInt(dy) * 1.0f / height });
+            var scale = material.GetTextureScale(OFFSET_ID);
+            material.SetTextureOffset(OFFSET_ID, new Vector2 { y = -Mathf.FloorToInt(dy) * scale.y / height });
         }
 
         private Mesh GetSharedMesh()
