@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef2364f3b0ae4937b3d44d11c6e292c7, type: 3}
-  m_Name: Hands
+  m_Name: Faces
   m_EditorClassIdentifier: 
-  _caveMaterial: {fileID: 2100000, guid: 4e709f2f49a5965439fa54b884812106, type: 2}
-  _caveBackMaterial: {fileID: 2100000, guid: 1f8684808171511468c97fbe0f551042, type: 2}
-  _backgroundMaterial: {fileID: 2100000, guid: f069ac608cd9bf24f85718717e727907, type: 2}
+  _caveMaterial: {fileID: 2100000, guid: 8b8d58e5d5dbb9f45b4b74f2f0e16606, type: 2}
+  _caveBackMaterial: {fileID: 2100000, guid: cc5c47894d1488343992c16f34e9c828, type: 2}
+  _backgroundMaterial: {fileID: 2100000, guid: fa412ebcb2437e64c8c2619e18bded6e, type: 2}
   _duration:
     min: 4
     max: 6
