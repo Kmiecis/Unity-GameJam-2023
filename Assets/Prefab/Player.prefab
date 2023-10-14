@@ -342,6 +342,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 439
   m_GroundCheck: {fileID: 2982280257352669354}
+  jumpSound: {fileID: 11400000, guid: e9b5d3b4b6f25734c9d5fcd79614beeb, type: 2}
   OnLandEvent:
     m_PersistentCalls:
       m_Calls:

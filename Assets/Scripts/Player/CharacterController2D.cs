@@ -1,5 +1,7 @@
+using Game;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 
 public class CharacterController2D : MonoBehaviour
 {
@@ -16,6 +18,9 @@ public class CharacterController2D : MonoBehaviour
 	private Vector3 m_Velocity = Vector3.zero;
 	
 	private bool _doubleJumpAvailable;
+	
+	public Sound jumpSound;
+	private SoundsManager _soundsManager;
 
 	[Header("Events")]
 	[Space]
@@ -28,6 +33,7 @@ public class CharacterController2D : MonoBehaviour
 	private void Awake()
 	{
 		m_Rigidbody2D = GetComponent<Rigidbody2D>();
+		_soundsManager = FindObjectOfType<SoundsManager>();
 
 		if (OnLandEvent == null)
 			OnLandEvent = new UnityEvent();
@@ -82,11 +88,13 @@ public class CharacterController2D : MonoBehaviour
 		{
 			// Add a vertical force to the player.
 			m_Grounded = false;
+			_soundsManager.PlaySound(jumpSound);
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
 		}
 		else if(_doubleJumpAvailable && jump)
 		{
 			_doubleJumpAvailable = false;
+			_soundsManager.PlaySound(jumpSound);
 			m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
 		}
 	}
