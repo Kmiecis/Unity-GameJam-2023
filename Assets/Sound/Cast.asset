@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a7224780dba9f54d9c047a624ce7469, type: 3}
   m_Name: Cast
   m_EditorClassIdentifier: 
-  clip: {fileID: 0}
+  clip: {fileID: 8300000, guid: b0139878760ed0b4c8b0de43ae6a4346, type: 3}
   volume: 1
   loop: 0

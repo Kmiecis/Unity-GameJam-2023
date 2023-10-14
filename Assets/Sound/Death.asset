@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2a7224780dba9f54d9c047a624ce7469, type: 3}
-  m_Name: ProjectileImpact
+  m_Name: Death
   m_EditorClassIdentifier: 
-  clip: {fileID: 8300000, guid: c4355892ec4ab6c45a7bdded7f0808d4, type: 3}
+  clip: {fileID: 8300000, guid: e9a3d0f8ec36feb4ea5891d5d5734607, type: 3}
   volume: 1
   loop: 0

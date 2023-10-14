@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Game
 {
@@ -12,11 +13,14 @@ namespace Game
 
         public bool IsGameOver
             => _isGameOver;
+        
+        public Sound gameOverSound;
+        private SoundsManager _soundsManager;
 
         public void SetGameOver()
         {
             _isGameOver = true;
-            
+            _soundsManager.PlaySound(gameOverSound);
             _ui.gameObject.SetActive(true);
         }
 
@@ -34,6 +38,7 @@ namespace Game
             _ui.gameObject.SetActive(false);
 
             _player = FindObjectOfType<PlayerMovement>();
+            _soundsManager = FindObjectOfType<SoundsManager>();
         }
 
         private void Update()

@@ -45,3 +45,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _yBoundary: -20
+  gameOverSound: {fileID: 11400000, guid: adb141894a88fac4baec77dce84af7b7, type: 2}
