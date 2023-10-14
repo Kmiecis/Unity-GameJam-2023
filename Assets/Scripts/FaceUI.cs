@@ -21,7 +21,6 @@ namespace Game
         [Header("Settings")]
         public float fadeInDuration = 1.0f;
         public float floatDuration = 1.0f;
-        public float pauseDuration = 1.0f;
         public float fadeOutDuration = 1.0f;
         public float fillDuration = 2.0f;
 
@@ -32,12 +31,11 @@ namespace Game
         {
             faceImage.CoFade(1.0f, fadeInDuration)
                 .With(quoteText.CoFade(1.0f, fadeInDuration))
+                .With(authorText.CoFade(1.0f, fadeInDuration))
                 .Then(
                     faceTransform.CoAnchorMin(new Vector2(-0.05f, 0.0f), floatDuration),
                     faceTransform.CoAnchorMax(Vector2.one, floatDuration)
                 )
-                .Then(authorText.CoFade(1.0f, pauseDuration))
-                .WaitRealtime(pauseDuration)
                 .Then(() => _finishing = true)
                 .Then(
                     faceImage.CoFade(0.0f, fadeOutDuration),

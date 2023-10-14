@@ -216,7 +216,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 1
+  m_HorizontalAlignment: 2
   m_VerticalAlignment: 256
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -550,7 +550,7 @@ RectTransform:
   m_Father: {fileID: 2092324137}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.1, y: 0.075}
-  m_AnchorMax: {x: 0.9, y: 0.15}
+  m_AnchorMax: {x: 0.85, y: 0.15}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1227,8 +1227,7 @@ MonoBehaviour:
   fillImage: {fileID: 1809163936}
   fillText: {fileID: 737831273}
   fadeInDuration: 1
-  floatDuration: 20
-  pauseDuration: 1
+  floatDuration: 22
   fadeOutDuration: 1
   fillDuration: 3
 --- !u!1660057539 &9223372036854775807
