@@ -2,6 +2,7 @@
   "dependencies": {
     "com.common.assemblies": "https://github.com/kmiecis/unity-package-common.git",
     "com.common.coroutines": "https://github.com/Kmiecis/Unity-Package-Coroutines.git",
+    "com.common.object.pooling": "https://github.com/Kmiecis/Unity-Package-ObjectPooling.git",
     "com.unity.2d.animation": "9.0.4",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.cinemachine": "2.9.7",

@@ -14,6 +14,13 @@
       "dependencies": {},
       "hash": "d99650b09a1d6709980ec786e3d66a52ef9bc943"
     },
+    "com.common.object.pooling": {
+      "version": "https://github.com/Kmiecis/Unity-Package-ObjectPooling.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "1463aaa8190550723c9bac7e447cbbaddb595ca4"
+    },
     "com.unity.2d.animation": {
       "version": "9.0.4",
       "depth": 0,
