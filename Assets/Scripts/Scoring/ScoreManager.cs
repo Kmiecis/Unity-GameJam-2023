@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Game
@@ -7,8 +6,13 @@ namespace Game
     {
         [SerializeField]
         protected float _scorePerSecond = 1.0f;
+        
+        [SerializeField]
+        protected ScorePickup[] _scoresPrefabs;
 
         private float _score;
+        private ScoreUI _scoreUI;
+        private CaveManager _cave;
 
         public void UpdateScore(float value)
         {
@@ -27,8 +31,13 @@ namespace Game
 
         private void ApplyPointsToUI()
         {
-            GameObject.FindObjectOfType<UIScoreHolder>()
-                .UpdateScore(_score);
+            _scoreUI.UpdateScore(_score);
+        }
+
+        private void Awake()
+        {
+            _scoreUI = FindObjectOfType<ScoreUI>();
+            _cave = FindObjectOfType<CaveManager>();
         }
 
         private void Start()

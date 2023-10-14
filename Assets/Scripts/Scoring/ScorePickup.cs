@@ -2,14 +2,14 @@
 
 namespace Game
 {
-    public class Score : MonoBehaviour
+    public class ScorePickup : MonoBehaviour
     {
         [SerializeField]
         protected float _value = 1.0f;
 
         public void OnScored()
         {
-            GameObject.FindObjectOfType<ScoreManager>()
+            FindObjectOfType<ScoreManager>()
                 .UpdateScore(_value);
         }
     }

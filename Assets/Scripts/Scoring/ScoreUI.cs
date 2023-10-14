@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class UIScoreHolder : MonoBehaviour
+    public class ScoreUI : MonoBehaviour
     {
         [SerializeField]
         protected TextMeshProUGUI _text;
