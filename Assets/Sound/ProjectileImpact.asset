@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ProjectileImpact
   m_EditorClassIdentifier: 
   clip: {fileID: 8300000, guid: c4355892ec4ab6c45a7bdded7f0808d4, type: 3}
-  volume: 1
+  volume: 0.5
   loop: 0
