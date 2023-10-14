@@ -14,11 +14,11 @@ namespace Game
         protected MonoBehaviour[] _targets;
 
         private float _offset;
-        private List<IScollable> _offsetteds = new();
+        private List<IScrollable> _offsetteds = new();
         
-        public void AddOffsetted(IScollable scollable)
+        public void AddOffsetted(IScrollable scrollable)
         {
-            _offsetteds.Add(scollable);
+            _offsetteds.Add(scrollable);
         }
 
         private void UpdateSpeed()
@@ -49,7 +49,7 @@ namespace Game
         {
             foreach (var target in _targets)
             {
-                if (target is IScollable offsetted)
+                if (target is IScrollable offsetted)
                 {
                     AddOffsetted(offsetted);
                 }

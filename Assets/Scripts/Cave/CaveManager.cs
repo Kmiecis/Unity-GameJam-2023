@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class CaveManager : MonoBehaviour, IScollable
+    public class CaveManager : MonoBehaviour, IScrollable
     {
         [SerializeField]
         protected CaveMesh _caveMesh;
