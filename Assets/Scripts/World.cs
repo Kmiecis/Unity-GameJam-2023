@@ -7,9 +7,6 @@ namespace Game
         [Header("Managers")]
         public LevelManager levelManager;
         public CaveManager caveManager;
-        public SoundsManager soundsManager;
-        [Header("Common")]
-        public Sound backgroundMusic;
         
         public void NextLevel()
         {
@@ -24,7 +21,6 @@ namespace Game
         private void Start()
         {
             levelManager.SetInitialLevel(caveManager);
-            soundsManager.PlaySound(backgroundMusic);
         }
     }
 }

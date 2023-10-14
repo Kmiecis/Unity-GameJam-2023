@@ -1,7 +1,9 @@
 using Common.Extensions;
 using Common.Pooling;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Common.Coroutines;
 using UnityEngine;
 
 namespace Game
@@ -81,6 +83,22 @@ namespace Game
             {
                 sample.source.volume = sample.data.volume * value;
             }
+        }
+
+        public IEnumerator FadeVolume(float duration, float target)
+        {
+            var timer = UCoroutine.YieldTimeNormalized(duration);
+            
+            var current = _volume;
+            while (timer.MoveNext())
+            {
+                var time = timer.Current;
+                current = target + (_volume - target) * (1.0f - time);
+                SetVolume(current);
+                
+                yield return null;
+            }
+            _volume = current;
         }
 
         public void SetMuted(bool muted)
