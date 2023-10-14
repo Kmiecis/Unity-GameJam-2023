@@ -23,6 +23,7 @@ namespace Game
         public float floatDuration = 1.0f;
         public float fadeOutDuration = 1.0f;
         public float fillDuration = 2.0f;
+        public float faceScale = 1.2f;
 
         private float _filled = 0.0f;
         private bool _finishing;
@@ -32,9 +33,9 @@ namespace Game
             faceImage.CoFade(1.0f, fadeInDuration)
                 .With(quoteText.CoFade(1.0f, fadeInDuration))
                 .With(authorText.CoFade(1.0f, fadeInDuration))
-                .Then(
-                    faceTransform.CoAnchorMin(new Vector2(-0.05f, 0.0f), floatDuration),
-                    faceTransform.CoAnchorMax(Vector2.one, floatDuration)
+                .Then(faceTransform.CoLocalScale(faceScale, floatDuration)
+                    //faceTransform.CoAnchorMin(new Vector2(-0.05f, 0.0f), floatDuration),
+                    //faceTransform.CoAnchorMax(Vector2.one, floatDuration)
                 )
                 .Then(() => _finishing = true)
                 .Then(

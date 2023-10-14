@@ -20,6 +20,8 @@ namespace Game
 
         public void SetInitialLevel()
         {
+            Random.InitState((int)DateTime.UtcNow.Ticks);
+            
             SetLevel(0);
         }
 

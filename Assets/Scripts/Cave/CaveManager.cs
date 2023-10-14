@@ -229,6 +229,11 @@ namespace Game
             }
         }
 
+        private void Awake()
+        {
+            caveInput.seed = DateTime.UtcNow.Ticks.ToString();
+        }
+
         private void Update()
         {
             Rebuild();
