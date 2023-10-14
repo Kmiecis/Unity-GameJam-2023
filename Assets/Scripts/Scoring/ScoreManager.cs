@@ -13,6 +13,7 @@ namespace Game
         private float _score;
         private ScoreUI _scoreUI;
         private CaveManager _cave;
+        private GameOverManager _gameOver;
 
         public void UpdateScore(float value)
         {
@@ -30,13 +31,17 @@ namespace Game
         
         private void ApplyPointsToUI()
         {
-            _scoreUI.UpdateScore(_score);
+            if (!_gameOver.IsGameOver)
+            {
+                _scoreUI.UpdateScore(_score);
+            }
         }
 
         private void Awake()
         {
             _scoreUI = FindObjectOfType<ScoreUI>();
             _cave = FindObjectOfType<CaveManager>();
+            _gameOver = FindObjectOfType<GameOverManager>();
         }
 
         private void Start()

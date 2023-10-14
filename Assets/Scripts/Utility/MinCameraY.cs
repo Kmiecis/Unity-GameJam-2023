@@ -4,10 +4,10 @@ using UnityEngine;
 namespace Game
 {
     [ExecuteInEditMode] [SaveDuringPlay] [AddComponentMenu("")] // Hide in menu
-    public class LockCameraX : CinemachineExtension
+    public class MinCameraY : CinemachineExtension
     {
-        [Tooltip("Lock the camera's X position to this value")]
-        public float _xPosition;
+        [Tooltip("Lock the camera's Y position to this value")]
+        public float _yPosition;
 
         protected override void PostPipelineStageCallback(
             CinemachineVirtualCameraBase vcam,
@@ -16,8 +16,11 @@ namespace Game
             if (enabled && stage == CinemachineCore.Stage.Body)
             {
                 var pos = state.RawPosition;
-                pos.x = _xPosition;
-                state.RawPosition = pos;
+                if (pos.y < _yPosition)
+                {
+                    pos.y = _yPosition;
+                    state.RawPosition = pos;
+                }
             }
         }
     }
