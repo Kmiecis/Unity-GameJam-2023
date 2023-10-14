@@ -184,6 +184,7 @@ MonoBehaviour:
   attackCooldown: 0.2
   projectilePrefab: {fileID: 940317502609674679, guid: dd333a581bc979147949833b141e38bb, type: 3}
   reloadBar: {fileID: 0}
+  attackSound: {fileID: 11400000, guid: 12f2b3b1dcf789043aca7311d336b84f, type: 2}
 --- !u!1 &8776150226844737035
 GameObject:
   m_ObjectHideFlags: 0

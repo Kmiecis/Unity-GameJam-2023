@@ -52,6 +52,7 @@ MonoBehaviour:
   speed: 15
   explosionRadius: 3
   explosionPrefab: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
+  impactSound: {fileID: 11400000, guid: be1eb92f6cb945c44a16748669d156d8, type: 2}
 --- !u!58 &6570781385712375320
 CircleCollider2D:
   m_ObjectHideFlags: 0

@@ -1,4 +1,5 @@
 ﻿using System;
+using Game;
 using UnityEngine;
 
 public class SpellCaster : MonoBehaviour
@@ -12,10 +13,14 @@ public class SpellCaster : MonoBehaviour
     private bool _isMouseClicked;
     
     [SerializeField] private UIReloadBar reloadBar;
+    
+    public Sound attackSound;
+    private SoundsManager _soundsManager;
 
     private void Awake()
     {
         _camera = Camera.main;
+        _soundsManager = FindObjectOfType<SoundsManager>();
     }
     
     private void Start()
@@ -52,6 +57,7 @@ public class SpellCaster : MonoBehaviour
         var currentPosition = transform.position;
         var mousePos = Input.mousePosition;
         mousePos.z = 0;
+        _soundsManager.PlaySound(attackSound);
         var projectile = Instantiate(projectilePrefab, currentPosition, Quaternion.identity);
         projectile.GetComponent<Projectile>().SetData(_camera.ScreenToWorldPoint(mousePos) - currentPosition);
     }

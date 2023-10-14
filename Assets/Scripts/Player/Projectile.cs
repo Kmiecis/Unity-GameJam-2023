@@ -1,6 +1,7 @@
 ﻿using Common.Extensions;
 using Game;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Projectile : MonoBehaviour
 {
@@ -12,10 +13,14 @@ public class Projectile : MonoBehaviour
 
     public GameObject explosionPrefab;
     
+    public Sound impactSound;
+    private SoundsManager _soundsManager;
+    
     private void Awake()
     {
         _body = GetComponent<Rigidbody2D>();
         _caveManager = FindObjectOfType<CaveManager>();
+        _soundsManager = FindObjectOfType<SoundsManager>();
     }
 
     public void SetData(Vector3 direction)
@@ -29,6 +34,7 @@ public class Projectile : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         var position = transform.position;
+        _soundsManager.PlaySound(impactSound);
         _caveManager.Damage((int) position.x, (int) position.y, explosionRadius);
         Instantiate(explosionPrefab, position, Quaternion.identity);
         gameObject.Destroy();
