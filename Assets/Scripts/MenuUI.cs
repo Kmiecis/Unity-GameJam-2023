@@ -1,5 +1,3 @@
-using System.Collections;
-using Common;
 using Common.Coroutines;
 using TMPro;
 using UnityEngine;
@@ -10,12 +8,13 @@ namespace Game
 {
     public class MenuUI : MonoBehaviour
     {
-        private const int GAME_SCENE_INDEX = 1;
-        
+        private const int NEXT_SCENE_INDEX = 1;
+
+        public Image ueBackground;
         public Image introBackground;
         public TextMeshProUGUI startText;
         public Button startButton;
-        
+        public Sound music;
 
         [Header("Settings")]
         public float introFadeInDuration = 1.0f;
@@ -24,11 +23,16 @@ namespace Game
         public float startTextBlinkDuration = 2.0f;
         public float fadeOutDuration = 1.0f;
 
+        private SoundsManager _soundsManager;
         private bool _ready;
 
         private void FadeIn()
         {
             UCoroutine.Yield()
+                .Then(ueBackground.CoFade(1.0f, introFadeInDuration))
+                .WaitRealtime(betweenDelay)
+                .Then(ueBackground.CoFade(0.0f, introFadeInDuration))
+                .Then(() => _soundsManager.PlaySound(music))
                 .Then(introBackground.CoFade(1.0f, introFadeInDuration))
                 .WaitRealtime(betweenDelay)
                 .Then(startText.CoFade(1.0f, startTextFadeInDuration))
@@ -50,9 +54,9 @@ namespace Game
                 .Then(
                     introBackground.CoFade(0.0f, fadeOutDuration),
                     startText.CoFade(0.0f, fadeOutDuration),
-                    FindObjectOfType<SoundsManager>().FadeVolume(fadeOutDuration, 0.0f)
+                    _soundsManager.FadeVolume(0.0f, fadeOutDuration)
                 )
-                .Then(LoadGameScene)
+                .Then(LoadNextScene)
                 .Start(this);
         }
 
@@ -70,9 +74,9 @@ namespace Game
             FadeOut();
         }
 
-        private void LoadGameScene()
+        private void LoadNextScene()
         {
-            SceneManager.LoadScene(GAME_SCENE_INDEX);
+            SceneManager.LoadScene(NEXT_SCENE_INDEX);
         }
 
         private void HandleInput()
@@ -85,6 +89,9 @@ namespace Game
         
         private void Awake()
         {
+            _soundsManager = FindObjectOfType<SoundsManager>();
+            
+            ueBackground.SetAlpha(0.0f);
             introBackground.SetAlpha(0.0f);
             startText.SetAlpha(0.0f);
         }

@@ -85,7 +85,7 @@ namespace Game
             }
         }
 
-        public IEnumerator FadeVolume(float duration, float target)
+        public IEnumerator FadeVolume(float target, float duration)
         {
             var timer = UCoroutine.YieldTimeNormalized(duration);
             
