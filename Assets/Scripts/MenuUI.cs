@@ -1,5 +1,3 @@
-using System.Collections;
-using Common;
 using Common.Coroutines;
 using TMPro;
 using UnityEngine;
@@ -10,7 +8,7 @@ namespace Game
 {
     public class MenuUI : MonoBehaviour
     {
-        private const int GAME_SCENE_INDEX = 1;
+        private const int NEXT_SCENE_INDEX = 1;
         
         public Image introBackground;
         public TextMeshProUGUI startText;
@@ -50,9 +48,9 @@ namespace Game
                 .Then(
                     introBackground.CoFade(0.0f, fadeOutDuration),
                     startText.CoFade(0.0f, fadeOutDuration),
-                    FindObjectOfType<SoundsManager>().FadeVolume(fadeOutDuration, 0.0f)
+                    FindObjectOfType<SoundsManager>().FadeVolume(0.0f, fadeOutDuration)
                 )
-                .Then(LoadGameScene)
+                .Then(LoadNextScene)
                 .Start(this);
         }
 
@@ -70,9 +68,9 @@ namespace Game
             FadeOut();
         }
 
-        private void LoadGameScene()
+        private void LoadNextScene()
         {
-            SceneManager.LoadScene(GAME_SCENE_INDEX);
+            SceneManager.LoadScene(NEXT_SCENE_INDEX);
         }
 
         private void HandleInput()
