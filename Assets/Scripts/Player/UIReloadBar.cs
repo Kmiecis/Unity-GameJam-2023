@@ -3,11 +3,10 @@ using UnityEngine.UI;
 
 public class UIReloadBar : MonoBehaviour
 {
-    [SerializeField] private Slider slider;
+    [SerializeField] private Image image;
     
     public void UpdateReloadSlider(float current, float target)
     {
-        slider.maxValue = target;
-        slider.value = current;
+        image.fillAmount = current / target;
     }
 }

@@ -11,14 +11,14 @@ public class SpellCaster : MonoBehaviour
     private Camera _camera;
 
     private bool _isMouseClicked;
-    
-    [SerializeField] private UIReloadBar reloadBar;
+    private UIReloadBar reloadBar;
     
     public Sound attackSound;
     private SoundsManager _soundsManager;
 
     private void Awake()
     {
+        reloadBar = FindObjectOfType<UIReloadBar>();
         _camera = Camera.main;
         _soundsManager = FindObjectOfType<SoundsManager>();
     }

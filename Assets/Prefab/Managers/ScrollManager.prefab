@@ -45,6 +45,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 1
-  _acceleration: 0
+  _acceleration: 0.1
   _targets:
   - {fileID: 0}
