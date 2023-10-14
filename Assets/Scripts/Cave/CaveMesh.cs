@@ -27,6 +27,8 @@ namespace Game
         protected float _wallHeight = 1.0f;
         [SerializeField]
         protected int _renderQueue = 2450;
+        [SerializeField]
+        protected float _disintegrateDuration = 1.0f;
 
         private Mesh _mesh;
         private Material _material;
@@ -80,7 +82,7 @@ namespace Game
         {
             _material.SetFloat(DISSOLVE_FLIP_ID, 1.0f);
             _material.SetFloat(DISSOLVE_ID, 0.0f);
-            _material.CoFloat(1.0f, DISSOLVE_ID, 1.0f, Easings.SmoothStep)
+            _material.CoFloat(1.0f, DISSOLVE_ID, _disintegrateDuration, Easings.SmoothStep)
                 .Then(() => callback(this))
                 .Start(this);
         }
@@ -89,7 +91,7 @@ namespace Game
         {
             _material.SetFloat(DISSOLVE_FLIP_ID, 0.0f);
             _material.SetFloat(DISSOLVE_ID, 1.0f);
-            _material.CoFloat(0.0f, DISSOLVE_ID, 1.0f, Easings.SmoothStep)
+            _material.CoFloat(0.0f, DISSOLVE_ID, _disintegrateDuration, Easings.SmoothStep)
                 .Start(this);
         }
 

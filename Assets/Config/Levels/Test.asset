@@ -15,3 +15,6 @@ MonoBehaviour:
   _caveMaterial: {fileID: 2100000, guid: ae6bedd70898e594f88ffa609ccc0bcb, type: 2}
   _caveBackMaterial: {fileID: 2100000, guid: cc5c47894d1488343992c16f34e9c828, type: 2}
   _backgroundMaterial: {fileID: 2100000, guid: ac11aa37b9b7f314a9ff523d3120ddfd, type: 2}
+  _duration:
+    min: 4
+    max: 6

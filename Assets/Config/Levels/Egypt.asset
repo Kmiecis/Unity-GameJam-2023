@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ef2364f3b0ae4937b3d44d11c6e292c7, type: 3}
   m_Name: Egypt
   m_EditorClassIdentifier: 
-  _caveMaterial: {fileID: 2100000, guid: 0a9b19df9db3acb4fa19057702c2da20, type: 2}
-  _caveBackMaterial: {fileID: 2100000, guid: f07d0a7419b77a84c9a38eca48db661e, type: 2}
-  _backgroundMaterial: {fileID: 2100000, guid: 07bde921aeb482c45904096256a816f0, type: 2}
+  _caveMaterial: {fileID: 2100000, guid: fab8b48ef16dd6243b943abfa401c884, type: 2}
+  _caveBackMaterial: {fileID: 2100000, guid: 649b6e9f5db4ec142b8793e7f946171b, type: 2}
+  _backgroundMaterial: {fileID: 2100000, guid: 29d2cefb699992a4a8a468608392a004, type: 2}
+  _duration:
+    min: 4
+    max: 6

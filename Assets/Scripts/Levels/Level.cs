@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Common.Mathematics;
+using UnityEngine;
 
 namespace Game
 {
@@ -11,6 +12,8 @@ namespace Game
         protected Material _caveBackMaterial;
         [SerializeField]
         protected Material _backgroundMaterial;
+        [SerializeField]
+        protected Range _duration = new Range(4.0f, 6.0f);
 
         public Material CaveMaterial
             => _caveMaterial;
@@ -20,5 +23,8 @@ namespace Game
 
         public Material BackgroundMaterial
             => _backgroundMaterial;
+
+        public float Duration
+            => Random.Range(_duration.min, _duration.max);
     }
 }

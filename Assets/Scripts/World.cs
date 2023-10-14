@@ -6,21 +6,20 @@ namespace Game
     {
         [Header("Managers")]
         public LevelManager levelManager;
-        public CaveManager caveManager;
         
         public void NextLevel()
         {
-            levelManager.SetNextLevel(caveManager);
+            levelManager.SetNextLevel();
         }
 
         public void RandomLevel()
         {
-            levelManager.SetRandomLevel(caveManager);
+            levelManager.SetRandomLevel();
         }
 
         private void Start()
         {
-            levelManager.SetInitialLevel(caveManager);
+            levelManager.SetInitialLevel();
         }
     }
 }
