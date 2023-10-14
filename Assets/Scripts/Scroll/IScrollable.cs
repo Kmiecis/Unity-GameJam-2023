@@ -1,6 +1,6 @@
 ﻿namespace Game
 {
-    public interface IScollable
+    public interface IScrollable
     {
         void ApplyScroll(float dy);
     }

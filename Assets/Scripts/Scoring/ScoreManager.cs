@@ -2,10 +2,10 @@ using UnityEngine;
 
 namespace Game
 {
-    public class ScoreManager : MonoBehaviour
+    public class ScoreManager : MonoBehaviour, IScrollable
     {
         [SerializeField]
-        protected float _scorePerSecond = 1.0f;
+        protected float _scorePerDistance = 1.0f;
         
         [SerializeField]
         protected ScorePickup[] _scoresPrefabs;
@@ -21,14 +21,13 @@ namespace Game
             ApplyPointsToUI();
         }
         
-        private void UpdatePointsPerSecond()
+        public void ApplyScroll(float dy)
         {
-            var dt = Time.deltaTime;
-            _score += _scorePerSecond * dt;
-
+            _score += _scorePerDistance * dy;
+            
             ApplyPointsToUI();
         }
-
+        
         private void ApplyPointsToUI()
         {
             _scoreUI.UpdateScore(_score);
@@ -43,11 +42,6 @@ namespace Game
         private void Start()
         {
             ApplyPointsToUI();
-        }
-
-        private void Update()
-        {
-            UpdatePointsPerSecond();
         }
     }
 }
