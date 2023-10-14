@@ -183,6 +183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackCooldown: 0.2
   projectilePrefab: {fileID: 940317502609674679, guid: dd333a581bc979147949833b141e38bb, type: 3}
+  reloadBar: {fileID: 0}
 --- !u!1 &8776150226844737035
 GameObject:
   m_ObjectHideFlags: 0
@@ -197,6 +198,7 @@ GameObject:
   - component: {fileID: 4554321874521153235}
   - component: {fileID: 3640497059377996552}
   - component: {fileID: 1198522152132164621}
+  - component: {fileID: 4182621536283705601}
   m_Layer: 6
   m_Name: Player
   m_TagString: Untagged
@@ -265,7 +267,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -282,9 +284,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.01, y: 0.09}
+  m_Offset: {x: 0.04, y: 0.14}
   serializedVersion: 2
-  m_Radius: 0.09
+  m_Radius: 0.06
 --- !u!58 &4554321874521153235
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -300,7 +302,7 @@ CircleCollider2D:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
   m_LayerOverridePriority: 0
   m_ForceSendLayers:
     serializedVersion: 2
@@ -369,6 +371,51 @@ MonoBehaviour:
   controller: {fileID: 3640497059377996552}
   model: {fileID: 214607628114550772}
   runSpeed: 40
+--- !u!61 &4182621536283705601
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8776150226844737035}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 64
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.027955603, y: -0.026091382}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.108200066, y: 0.34451255}
+  m_EdgeRadius: 0
 --- !u!1001 &3339254341768182405
 PrefabInstance:
   m_ObjectHideFlags: 0
