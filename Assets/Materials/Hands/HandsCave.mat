@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: EgyptCave
+  m_Name: HandsCave
   m_Shader: {fileID: -6465566751694194690, guid: 25144be1e18de494bb776381943cd086, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -28,7 +28,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: ea9ee9acd615d9448a072875afe19481, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6846d21ad783deb499cba96b4f8979d5, type: 3}
         m_Scale: {x: 3, y: 3}
         m_Offset: {x: 0, y: 0}
     - _DissolveTexture:

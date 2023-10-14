@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef2364f3b0ae4937b3d44d11c6e292c7, type: 3}
-  m_Name: Gloo
+  m_Name: Hands
   m_EditorClassIdentifier: 
-  _caveMaterial: {fileID: 2100000, guid: f464c563213cc5f45aaa0cc4d58bcfd2, type: 2}
-  _caveBackMaterial: {fileID: 2100000, guid: cc5c47894d1488343992c16f34e9c828, type: 2}
-  _backgroundMaterial: {fileID: 2100000, guid: a5b5a982aa100f54c98cbc6bca953434, type: 2}
+  _caveMaterial: {fileID: 2100000, guid: fab8b48ef16dd6243b943abfa401c884, type: 2}
+  _caveBackMaterial: {fileID: 2100000, guid: 649b6e9f5db4ec142b8793e7f946171b, type: 2}
+  _backgroundMaterial: {fileID: 2100000, guid: 29d2cefb699992a4a8a468608392a004, type: 2}
   _duration:
     min: 4
     max: 6
