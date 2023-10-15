@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Game
 {
-    public class PlayBackgroundMusic : MonoBehaviour
+    public class PlaySound : MonoBehaviour
     {
         public Sound music;
         
