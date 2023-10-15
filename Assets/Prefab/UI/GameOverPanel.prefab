@@ -197,7 +197,9 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: YOU DIED
+  m_text: 'SWALLOWED BY
+
+    HELL'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 23d2f1bd9a672bf40bb9ce996b3be292, type: 2}
   m_sharedMaterial: {fileID: 3269981109950097954, guid: 23d2f1bd9a672bf40bb9ce996b3be292, type: 2}

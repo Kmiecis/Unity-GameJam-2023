@@ -154,7 +154,7 @@ MonoBehaviour:
   _collider: {fileID: 7941452573959318626}
   _wallHeight: 1
   _renderQueue: 2450
-  _disintegrateDuration: 2
+  _disintegrateDuration: 3
 --- !u!114 &7941452573959318626
 MonoBehaviour:
   m_ObjectHideFlags: 0
