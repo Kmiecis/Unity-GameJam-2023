@@ -52,8 +52,8 @@ MonoBehaviour:
   _caveBackMesh: {fileID: 1545550710155243371}
   _caveBackground: {fileID: 796990482402839079}
   caveInput:
-    width: 40
-    height: 40
+    width: 32
+    height: 32
     smooths: 4
     fill: 0.25
     seed: 
@@ -68,7 +68,7 @@ MonoBehaviour:
     roomSizeThreshold: 0
     passageWidth: 0
     borderHeight: -5
-    borderWidth: 5
+    borderWidth: 2
     borderless: 1
   damageDelay: 1
   damageRepair: 1
@@ -257,7 +257,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3531135618471494512, guid: fd56ec29973b0984fbe5ed8dc614a6ff, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5
+      value: 3.6
       objectReference: {fileID: 0}
     - target: {fileID: 3531135618471494512, guid: fd56ec29973b0984fbe5ed8dc614a6ff, type: 3}
       propertyPath: m_LocalPosition.z

@@ -10,11 +10,14 @@ namespace Game
     {
         public Image backgroundImage;
         public Button backgroundButton;
-        public TextMeshProUGUI text;
+        public TextMeshProUGUI upperTtext;
+        public TextMeshProUGUI lowerText;
+        public TextMeshProUGUI tipText;
         public Image overlayImage;
         [Header("Settings")]
         public float fadeInDuration = 1.0f;
         public float fadeOutDuration = 1.0f;
+        public float delayDuration = 1.0f;
 
         private void FadeIn()
         {
@@ -24,8 +27,11 @@ namespace Game
             }
             
             backgroundImage.CoFade(0.5f, fadeInDuration)
-                .With(text.CoFade(1.0f, fadeInDuration))
+                .With(upperTtext.CoFade(1.0f, fadeInDuration))
+                .With(lowerText.CoFade(1.0f, fadeInDuration))
                 .Then(Finish)
+                .WaitRealtime(delayDuration)
+                .Then(tipText.CoFade(1.0f, fadeInDuration))
                 .Start(this);
         }
 
@@ -50,7 +56,9 @@ namespace Game
         private void Awake()
         {
             backgroundImage.SetAlpha(0.0f);
-            text.SetAlpha(0.0f);
+            upperTtext.SetAlpha(0.0f);
+            lowerText.SetAlpha(0.0f);
+            tipText.SetAlpha(0.0f);
             overlayImage.SetAlpha(0.0f);
         }
 
